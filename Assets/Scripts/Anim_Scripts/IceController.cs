@@ -8,10 +8,12 @@ public class IceController : MonoBehaviour
     float initHeight;
     float heightDisplaced;
     public GameObject particlePrefab;
+
+    public GameObject iceShardPrefab;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
     public void RegisterInitHeight(float initHeight, float heighDisplaced)
     {
@@ -33,11 +35,11 @@ public class IceController : MonoBehaviour
 
         Vector3 pos = new Vector3(transform.position.x, transform.position.y, 0.1f);
         GameObject particleObj = Instantiate(particlePrefab, pos, Quaternion.identity);
-    
+
         ParticleSystem ps = particleObj.GetComponent<ParticleSystem>();
         if (ps != null)
         {
-            ps.Play(); 
+            ps.Play();
         }
 
         for (int i = 0; i < SLIDE_FRAMES; i++)
@@ -70,5 +72,19 @@ public class IceController : MonoBehaviour
             yield return new WaitForSeconds(0.75f / SLIDE_FRAMES);
         }
         // mat.DisableKeyword("_EMISSION");
+    }
+
+    public void DestroyIce()
+    {
+        Vector3 createPos = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
+        GameObject ShardEff = Instantiate(iceShardPrefab, transform.position, Quaternion.identity);
+        ShardEff.GetComponent<ParticleSystem>().Play();
+        StartCoroutine(DieInAHoleBrochacho());
+    }
+    
+    IEnumerator DieInAHoleBrochacho()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Destroy(gameObject);
     }
 }

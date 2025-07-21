@@ -82,3 +82,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particlePrefab: {fileID: 343524456448342808, guid: 446e5bccc36634284af1b4391efac3c9, type: 3}
+  iceShardPrefab: {fileID: 3256162275450036074, guid: 41f70de2f277048a3943a543ca43ddaa, type: 3}

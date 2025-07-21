@@ -1,5 +1,7 @@
 using System.Collections;
 using Cinemachine;
+using Unity.Mathematics;
+
 
 
 //using System.Numerics;
@@ -11,11 +13,16 @@ public class Attack : MonoBehaviour
     //Cam Shenanigans
     public CinemachineVirtualCamera camGameplay;
     public CinemachineVirtualCamera camFrogZoom;
+    public CinemachineVirtualCamera camFrogAttack;
+    public CinemachineVirtualCamera EnemyHitCam;
+    public CinemachineVirtualCamera MidIceCam;
+    public CinemachineVirtualCamera camIceSpellCamTwo;
     private Animator animator;
     public GameObject icePrefab;
     public GameObject enemy;
     public float animLength = 1.5f;
     [SerializeField] float iceSpacing; //Spacing between ice blocks
+    public GameObject iceTrailLead;
     public enum AttackType
     {
         Water,
@@ -28,10 +35,12 @@ public class Attack : MonoBehaviour
         Light,
     }
     private AttackType currentAttackType = AttackType.Ice;
+    Quaternion startRot;
 
     void Start()
     {
         animator = GetComponent<Animator>();
+        //iceTrailLead.GetComponent<Renderer>().enabled = false; //make invisible
     }
 
     void Update()
@@ -64,12 +73,14 @@ public class Attack : MonoBehaviour
         endPos -= direction / 16f;
         direction = endPos - startPos;
         StartCoroutine(SpawnIce(startPos, endPos, direction));
-        StartCoroutine(CameraAnimIce());
+        //StartCoroutine(CameraAnimIce());
+        StartCoroutine(ZoomCamInSpellCast());
 
     }
 
     IEnumerator SpawnIce(Vector3 startPos, Vector3 endPos, Vector3 direction)
     {
+        iceTrailLead.transform.position = gameObject.transform.position;
         yield return new WaitForSeconds(0.5f);
         Debug.Log("Attack Trigger Set");
         animator.SetTrigger("AttackTrigger");
@@ -90,29 +101,32 @@ public class Attack : MonoBehaviour
         dist = iceSpacing;
         ArrayList iceObjects = new ArrayList();
         int numSteps = (int)(direction.magnitude / dist);
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(1.5f);
+        StartCoroutine(CamFollowIceSpell());
+        yield return new WaitForSeconds(0.5f);
         for (int i = 0; i < numSteps; i++)
         {
             Quaternion tilt;
             float xTilt;
             UnityEngine.Vector3 spawnPos = startPos + (direction / numSteps) * i;
+            iceTrailLead.transform.position = new Vector3(spawnPos.x, 1.2f, spawnPos.z);
 
-            float yTilt = Random.Range(-7.5f, -7.5f);
-            float zTilt = Random.Range(-7.5f, -7.5f);
+            float yTilt = UnityEngine.Random.Range(-7.5f, -7.5f);
+            float zTilt = UnityEngine.Random.Range(-7.5f, -7.5f);
             switch (i % 4)
             {
                 case 0:
                     tilt = Quaternion.Euler(0f, yTilt, zTilt);
                     break;
                 case 1:
-                    xTilt = Random.Range(10f, 20f);
+                    xTilt = UnityEngine.Random.Range(10f, 20f);
                     tilt = Quaternion.Euler(xTilt, yTilt, zTilt);
-                    spawnPos -= new Vector3(0f, 0f, Random.Range(0.5f, 0.75f));
+                    spawnPos -= new Vector3(0f, 0f, UnityEngine.Random.Range(0.5f, 0.75f));
                     break;
                 case 2:
-                    xTilt = Random.Range(-10f, -20f);
+                    xTilt = UnityEngine.Random.Range(-10f, -20f);
                     tilt = Quaternion.Euler(xTilt, yTilt, zTilt);
-                    spawnPos += new Vector3(0f, 0f, Random.Range(0.5f, 0.75f));
+                    spawnPos += new Vector3(0f, 0f, UnityEngine.Random.Range(0.5f, 0.75f));
                     break;
                 case 3:
                     tilt = Quaternion.Euler(0f, yTilt, zTilt);
@@ -131,7 +145,23 @@ public class Attack : MonoBehaviour
             iceObjects.Add(ice);
             yield return new WaitForSeconds(0.075f);
         }
-
+        yield return new WaitForSeconds(2f);
+        for (int i = iceObjects.Count - 1; i >= 0; i--)
+        {
+            GameObject ice = (GameObject)iceObjects[i];
+            if (ice != null)
+            {
+                ice.GetComponent<IceController>().DestroyIce();
+            }
+        }
+        yield return new WaitForSeconds(1f);
+        camGameplay.Priority = 20;
+        camFrogZoom.Priority = 10;
+        camFrogAttack.Priority = 10;
+        camIceSpellCamTwo.Priority = 10;
+        EnemyHitCam.Priority = 10;
+        MidIceCam.Priority = 10;
+        yield return new WaitForSeconds(0.75f);
     }
 
     IEnumerator CameraAnimIce()
@@ -150,11 +180,215 @@ public class Attack : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f);
 
-        camGameplay.Priority = 50;
+        camFrogAttack.Priority = 30;
+        camGameplay.Priority = 20;
         camFrogZoom.Priority = 10;
+        yield return null;
+
+        yield return new WaitForSeconds(1f);
+
+        Quaternion frogAttackStart = camFrogAttack.transform.rotation;
+        Quaternion frogAttackEnd = MidIceCam.transform.rotation;
+        Vector3 frogAttackPos = camFrogAttack.transform.position;
+        Vector3 frogAttackEndPos = MidIceCam.transform.position;
+
+        camFrogAttack.transform.rotation = frogAttackStart;
+        camFrogAttack.transform.position = frogAttackPos;
+
+        t = 0f;
+
+        float duration = 0.5f;
+        while (t < duration)
+        {
+            float easedT = Mathf.SmoothStep(0f, 1f, Mathf.Min(t / duration, 1f));
+            camFrogAttack.transform.rotation = Quaternion.Lerp(frogAttackStart, frogAttackEnd, easedT);
+            camFrogAttack.transform.position = Vector3.Lerp(frogAttackPos, frogAttackEndPos, easedT);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        /*
+        camFrogAttack.Priority = 10;
+        camGameplay.Priority = 20;
+        camFrogZoom.Priority = 10;
+        MidIceCam.Priority = 30;
+        */
+        camFrogAttack.transform.rotation = frogAttackEnd;
+        camFrogAttack.transform.position = frogAttackEndPos;
+
+        Quaternion IceStart = camFrogAttack.transform.rotation;
+        Vector3 IcePos = camFrogAttack.transform.position;
+        // Quaternion IceStart = MidIceCam.transform.rotation;
+        frogAttackEnd = EnemyHitCam.transform.rotation;
+        // Vector3 IcePos = MidIceCam.transform.position;
+        frogAttackEndPos = EnemyHitCam.transform.position;
+
+        t = 0f;
+
+        duration = 0.5f;
+        while (t < duration)
+        {
+            float easedT = Mathf.SmoothStep(0f, 1f, Mathf.Min(t / duration, 1f));
+            camFrogAttack.transform.rotation = Quaternion.Lerp(IceStart, frogAttackEnd, easedT);
+            camFrogAttack.transform.position = Vector3.Lerp(IcePos, frogAttackEndPos, easedT);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        camFrogZoom.transform.rotation = startRot;
 
         yield return new WaitForSeconds(0.5f);
-        camFrogZoom.transform.rotation = startRot; // Reset camera rotation
 
+        /*
+        EnemyHitCam.Priority = 30;
+        camFrogAttack.Priority = 10;
+        camGameplay.Priority = 20;
+        camFrogZoom.Priority = 10;
+        MidIceCam.Priority = 10;
+        */
+
+        yield return new WaitForSeconds(0.6f);
+        MidIceCam.transform.position = IcePos;
+        MidIceCam.transform.rotation = IceStart;
+
+
+        yield return new WaitForSeconds(1.5f); // Reset camera rotation
+
+        EnemyHitCam.Priority = 10;
+        camFrogAttack.Priority = 10;
+        camGameplay.Priority = 20;
+        camFrogZoom.Priority = 10;
+        MidIceCam.Priority = 10;
+        yield return new WaitForSeconds(0.5f);
+
+        camFrogAttack.transform.position = frogAttackPos;
+        camFrogAttack.transform.rotation = frogAttackStart;
+
+    }
+    /* THIS IS EXACTLY 100 LINES OF CODE SO IM SAVING IT DONT YOU DARE DELETE IT OR TOUCH IT ISTG
+        IEnumerator CameraAnimIceTwo()
+        {
+            camFrogZoom.Priority = 20;
+            camGameplay.Priority = 10;
+            Quaternion startRot = camFrogZoom.transform.rotation;
+            Quaternion endRot = Quaternion.Euler(startRot.eulerAngles + new Vector3(-20f, 0f, 0f));
+            float t = 0f;
+            while (t < 1f)
+            {
+                camFrogZoom.transform.rotation = Quaternion.Lerp(startRot, endRot, t);
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(1.0f);
+
+            camFrogAttack.Priority = 30;
+            camGameplay.Priority = 20;
+            camFrogZoom.Priority = 10;
+            yield return null;
+
+            yield return new WaitForSeconds(1f);
+
+            Quaternion frogAttackStart = camFrogAttack.transform.rotation;
+            Quaternion frogAttackEnd = MidIceCam.transform.rotation;
+            Vector3 frogAttackPos = camFrogAttack.transform.position;
+            Vector3 frogAttackEndPos = MidIceCam.transform.position;
+
+            camFrogAttack.transform.rotation = frogAttackStart;
+            camFrogAttack.transform.position = frogAttackPos;
+
+            t = 0f;
+
+            float duration = 0.5f;
+            while (t < duration)
+            {
+                float easedT = Mathf.SmoothStep(0f, 1f, Mathf.Min(t / duration, 1f));
+                camFrogAttack.transform.rotation = Quaternion.Lerp(frogAttackStart, frogAttackEnd, easedT);
+                camFrogAttack.transform.position = Vector3.Lerp(frogAttackPos, frogAttackEndPos, easedT);
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            //camFrogAttack.Priority = 10;
+            //camGameplay.Priority = 20;
+            //camFrogZoom.Priority = 10;
+            //MidIceCam.Priority = 30;
+
+            camFrogAttack.transform.rotation = frogAttackEnd;
+            camFrogAttack.transform.position = frogAttackEndPos;
+
+            Quaternion IceStart = camFrogAttack.transform.rotation;
+            Vector3 IcePos = camFrogAttack.transform.position;
+            // Quaternion IceStart = MidIceCam.transform.rotation;
+            frogAttackEnd = EnemyHitCam.transform.rotation;
+            // Vector3 IcePos = MidIceCam.transform.position;
+            frogAttackEndPos = EnemyHitCam.transform.position;
+
+            t = 0f;
+
+            duration = 0.5f;
+            while (t < duration)
+            {
+                float easedT = Mathf.SmoothStep(0f, 1f, Mathf.Min(t / duration, 1f));
+                camFrogAttack.transform.rotation = Quaternion.Lerp(IceStart, frogAttackEnd, easedT);
+                camFrogAttack.transform.position = Vector3.Lerp(IcePos, frogAttackEndPos, easedT);
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            camFrogZoom.transform.rotation = startRot;
+
+            yield return new WaitForSeconds(0.5f);
+
+
+            //EnemyHitCam.Priority = 30;
+            //camFrogAttack.Priority = 10;
+            //camGameplay.Priority = 20;
+            //camFrogZoom.Priority = 10;
+            //MidIceCam.Priority = 10;
+
+
+            yield return new WaitForSeconds(0.6f);
+            MidIceCam.transform.position = IcePos;
+            MidIceCam.transform.rotation = IceStart;
+
+
+            yield return new WaitForSeconds(1.5f); // Reset camera rotation
+
+            EnemyHitCam.Priority = 10;
+            camFrogAttack.Priority = 10;
+            camGameplay.Priority = 20;
+            camFrogZoom.Priority = 10;
+            MidIceCam.Priority = 10;
+            yield return new WaitForSeconds(0.5f);
+
+            camFrogAttack.transform.position = frogAttackPos;
+            camFrogAttack.transform.rotation = frogAttackStart;
+
+        }
+        */
+    IEnumerator ZoomCamInSpellCast()
+    {
+        camFrogZoom.Priority = 20;
+        camGameplay.Priority = 10;
+        startRot = camFrogZoom.transform.rotation;
+        Quaternion endRot = Quaternion.Euler(startRot.eulerAngles + new Vector3(-20f, 0f, 0f));
+        float t = 0f;
+        while (t < 1f)
+        {
+            camFrogZoom.transform.rotation = Quaternion.Lerp(startRot, endRot, t);
+            t += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    IEnumerator CamFollowIceSpell()
+    {
+        yield return null;
+
+        camFrogZoom.Priority = 10;
+        camGameplay.Priority = 20;
+        camIceSpellCamTwo.Priority = 30;
+        camFrogZoom.transform.rotation = startRot;
+        
     }
 }
