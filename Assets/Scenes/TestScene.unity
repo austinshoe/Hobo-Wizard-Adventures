@@ -752,6 +752,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: IceCrystal
       objectReference: {fileID: 0}
+    - target: {fileID: 3017975226563162730, guid: d689ef07c06bb45f1a34858bd9329902, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

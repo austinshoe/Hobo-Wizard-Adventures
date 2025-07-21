@@ -82,7 +82,7 @@ public class Attack : MonoBehaviour
         dist = iceSpacing;
         ArrayList iceObjects = new ArrayList();
         int numSteps = (int)(direction.magnitude / dist);
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2.0f);
         for (int i = 0; i < numSteps; i++)
         {
             Quaternion tilt;
@@ -111,6 +111,7 @@ public class Attack : MonoBehaviour
             spawnPos.y -= scale.y;
 
             GameObject ice = Instantiate(icePrefab, spawnPos, tilt);
+            ice.GetComponent<IceController>().RegisterInitHeight(spawnPos.y, scale.y);
             iceObjects.Add(ice);
             yield return new WaitForSeconds(0.075f);
         }
