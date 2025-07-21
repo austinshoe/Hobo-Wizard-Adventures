@@ -1,8 +1,27 @@
+using System.Collections;
+//using System.Numerics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Attack : MonoBehaviour
 {
     private Animator animator;
+    public GameObject icePrefab;
+    public GameObject enemy;
+    public float animLength = 1.5f;
+    [SerializeField] float iceSpacing; //Spacing between ice blocks
+    public enum AttackType
+    {
+        Water,
+        Ice,
+        Fire,
+        Lightning,
+        Earth,
+        Air,
+        Shadow,
+        Light,
+    }
+    private AttackType currentAttackType = AttackType.Ice;
 
     void Start()
     {
@@ -16,6 +35,85 @@ public class Attack : MonoBehaviour
         {
             Debug.Log("Attack Trigger Set");
             animator.SetTrigger("AttackTrigger");
+            PerformAttack();
         }
+    }
+    private void PerformAttack()
+    {
+        switch (currentAttackType)
+        {
+            case AttackType.Ice:
+                PerformAttackIce();
+                break;
+            // Add cases for other attack types as needed
+            default:
+                Debug.LogWarning("Attack type not implemented: " + currentAttackType);
+                break;
+        }
+    }
+    private void PerformAttackIce()
+    {
+        Vector3 startPos = this.transform.position;
+        Vector3 endPos = enemy.transform.position;
+        Vector3 direction = (endPos - startPos);
+        startPos += direction / 8f;
+        endPos -= direction / 8f;
+        direction = endPos - startPos;
+        StartCoroutine(SpawnIce(startPos, endPos, direction));
+
+    }
+
+    IEnumerator SpawnIce(Vector3 startPos, Vector3 endPos, Vector3 direction)
+    {
+        Renderer rend = icePrefab.GetComponent<Renderer>();
+        Vector3 scale = rend.bounds.size;
+        float slope = direction.y / direction.x;
+        float dist;
+        /*if (slope > 1f)
+        { //y is larger than x
+            dist = scale.y * scale.y + (scale.x / slope) * (scale.x / slope);
+            dist = Mathf.Sqrt(dist);
+        }
+        else
+        { //x is larger than y
+            dist = scale.x * scale.x + (scale.y * slope) * (scale.y * slope);
+            dist = Mathf.Sqrt(dist);
+        }*/
+        dist = iceSpacing;
+        ArrayList iceObjects = new ArrayList();
+        int numSteps = (int)(direction.magnitude / dist);
+        yield return new WaitForSeconds(1.5f);
+        for (int i = 0; i < numSteps; i++)
+        {
+            Quaternion tilt;
+            float xTilt;
+            switch (i % 3)
+            {
+                case 0:
+                    tilt = Quaternion.Euler(0f, 0f, 0f);
+                    break;
+                case 1:
+                    xTilt = Random.Range(7.5f, 15f);
+                    tilt = Quaternion.Euler(xTilt, 0f, 0f);
+                    break;
+                case 2:
+                    xTilt = Random.Range(-7.5f, -15f);
+                    tilt = Quaternion.Euler(xTilt, 0f, 0f);
+                    break;
+                default:
+                    tilt = Quaternion.Euler(0f, 0f, 0f);
+                    break;
+
+            }
+            UnityEngine.Quaternion rotation = UnityEngine.Quaternion.LookRotation(direction);
+            tilt *= rotation;
+            UnityEngine.Vector3 spawnPos = startPos + (direction / numSteps) * i;
+            spawnPos.y -= scale.y;
+
+            GameObject ice = Instantiate(icePrefab, spawnPos, tilt);
+            iceObjects.Add(ice);
+            yield return new WaitForSeconds(0.075f);
+        }
+
     }
 }
