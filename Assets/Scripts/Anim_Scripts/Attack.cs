@@ -1,4 +1,6 @@
 using System.Collections;
+using Cinemachine;
+
 
 //using System.Numerics;
 using Unity.VisualScripting;
@@ -6,6 +8,9 @@ using UnityEngine;
 
 public class Attack : MonoBehaviour
 {
+    //Cam Shenanigans
+    public CinemachineVirtualCamera camGameplay;
+    public CinemachineVirtualCamera camFrogZoom;
     private Animator animator;
     public GameObject icePrefab;
     public GameObject enemy;
@@ -34,8 +39,6 @@ public class Attack : MonoBehaviour
         // Replace KeyCode.Space with your preferred input
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Attack Trigger Set");
-            animator.SetTrigger("AttackTrigger");
             PerformAttack();
         }
     }
@@ -58,14 +61,18 @@ public class Attack : MonoBehaviour
         Vector3 endPos = enemy.transform.position;
         Vector3 direction = (endPos - startPos);
         startPos += direction / 8f;
-        endPos -= direction / 8f;
+        endPos -= direction / 16f;
         direction = endPos - startPos;
         StartCoroutine(SpawnIce(startPos, endPos, direction));
+        StartCoroutine(CameraAnimIce());
 
     }
 
     IEnumerator SpawnIce(Vector3 startPos, Vector3 endPos, Vector3 direction)
     {
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Attack Trigger Set");
+        animator.SetTrigger("AttackTrigger");
         Renderer rend = icePrefab.GetComponent<Renderer>();
         Vector3 scale = rend.bounds.size;
         float slope = direction.y / direction.x;
@@ -98,14 +105,14 @@ public class Attack : MonoBehaviour
                     tilt = Quaternion.Euler(0f, yTilt, zTilt);
                     break;
                 case 1:
-                    xTilt = Random.Range(7.5f, 15f);
+                    xTilt = Random.Range(10f, 20f);
                     tilt = Quaternion.Euler(xTilt, yTilt, zTilt);
-                    spawnPos -= new Vector3(0f, 0f, Random.Range(0.25f, 0.5f));
+                    spawnPos -= new Vector3(0f, 0f, Random.Range(0.5f, 0.75f));
                     break;
                 case 2:
-                    xTilt = Random.Range(-7.5f, -15f);
+                    xTilt = Random.Range(-10f, -20f);
                     tilt = Quaternion.Euler(xTilt, yTilt, zTilt);
-                    spawnPos += new Vector3(0f, 0f, Random.Range(0.25f, 0.5f));
+                    spawnPos += new Vector3(0f, 0f, Random.Range(0.5f, 0.75f));
                     break;
                 case 3:
                     tilt = Quaternion.Euler(0f, yTilt, zTilt);
@@ -124,6 +131,30 @@ public class Attack : MonoBehaviour
             iceObjects.Add(ice);
             yield return new WaitForSeconds(0.075f);
         }
+
+    }
+
+    IEnumerator CameraAnimIce()
+    {
+        camFrogZoom.Priority = 20;
+        camGameplay.Priority = 10;
+        Quaternion startRot = camFrogZoom.transform.rotation;
+        Quaternion endRot = Quaternion.Euler(startRot.eulerAngles + new Vector3(-20f, 0f, 0f));
+        float t = 0f;
+        while (t < 1f)
+        {
+            camFrogZoom.transform.rotation = Quaternion.Lerp(startRot, endRot, t);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(1.0f);
+
+        camGameplay.Priority = 50;
+        camFrogZoom.Priority = 10;
+
+        yield return new WaitForSeconds(0.5f);
+        camFrogZoom.transform.rotation = startRot; // Reset camera rotation
 
     }
 }
