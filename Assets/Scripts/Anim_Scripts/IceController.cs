@@ -84,7 +84,7 @@ public class IceController : MonoBehaviour
     
     IEnumerator DieInAHoleBrochacho()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.125f);
         Destroy(gameObject);
     }
 }
