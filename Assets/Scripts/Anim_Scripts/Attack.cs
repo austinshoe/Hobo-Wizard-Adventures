@@ -1,4 +1,5 @@
 using System.Collections;
+
 //using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -87,27 +88,35 @@ public class Attack : MonoBehaviour
         {
             Quaternion tilt;
             float xTilt;
-            switch (i % 3)
+            UnityEngine.Vector3 spawnPos = startPos + (direction / numSteps) * i;
+
+            float yTilt = Random.Range(-7.5f, -7.5f);
+            float zTilt = Random.Range(-7.5f, -7.5f);
+            switch (i % 4)
             {
                 case 0:
-                    tilt = Quaternion.Euler(0f, 0f, 0f);
+                    tilt = Quaternion.Euler(0f, yTilt, zTilt);
                     break;
                 case 1:
                     xTilt = Random.Range(7.5f, 15f);
-                    tilt = Quaternion.Euler(xTilt, 0f, 0f);
+                    tilt = Quaternion.Euler(xTilt, yTilt, zTilt);
+                    spawnPos -= new Vector3(0f, 0f, Random.Range(0.25f, 0.5f));
                     break;
                 case 2:
                     xTilt = Random.Range(-7.5f, -15f);
-                    tilt = Quaternion.Euler(xTilt, 0f, 0f);
+                    tilt = Quaternion.Euler(xTilt, yTilt, zTilt);
+                    spawnPos += new Vector3(0f, 0f, Random.Range(0.25f, 0.5f));
+                    break;
+                case 3:
+                    tilt = Quaternion.Euler(0f, yTilt, zTilt);
                     break;
                 default:
-                    tilt = Quaternion.Euler(0f, 0f, 0f);
+                    tilt = Quaternion.Euler(0f, yTilt, zTilt);
                     break;
 
             }
             UnityEngine.Quaternion rotation = UnityEngine.Quaternion.LookRotation(direction);
             tilt *= rotation;
-            UnityEngine.Vector3 spawnPos = startPos + (direction / numSteps) * i;
             spawnPos.y -= scale.y;
 
             GameObject ice = Instantiate(icePrefab, spawnPos, tilt);

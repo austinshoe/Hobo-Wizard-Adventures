@@ -7,6 +7,7 @@ public class IceController : MonoBehaviour
     private const int SLIDE_FRAMES = 10;
     float initHeight;
     float heightDisplaced;
+    public GameObject particlePrefab;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -29,12 +30,23 @@ public class IceController : MonoBehaviour
     }
     IEnumerator SlideUpAndOut()
     {
+
+        Vector3 pos = new Vector3(transform.position.x, transform.position.y, 0.1f);
+        GameObject particleObj = Instantiate(particlePrefab, pos, Quaternion.identity);
+    
+        ParticleSystem ps = particleObj.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            ps.Play(); 
+        }
+
         for (int i = 0; i < SLIDE_FRAMES; i++)
         {
             float yBlock = heightDisplaced / SLIDE_FRAMES;
             transform.position += yBlock / transform.up.y * transform.up;
             yield return new WaitForSeconds(SLIDE_TIME / SLIDE_FRAMES);
         }
+
         yield return new WaitForSeconds(0.5f); //wait before initializing fadeout
 
         // FADE OUT GLOW
