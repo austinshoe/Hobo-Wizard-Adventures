@@ -72,7 +72,8 @@ public class Attack : MonoBehaviour
         startPos += direction / 8f;
         endPos -= direction / 16f;
         direction = endPos - startPos;
-        StartCoroutine(SpawnIce(startPos, endPos, direction));
+        //StartCoroutine(SpawnIce(startPos, endPos, direction));
+        StartCoroutine(SpawnIceVerTwo(startPos, endPos, direction));
         //StartCoroutine(CameraAnimIce());
         StartCoroutine(ZoomCamInSpellCast());
 
@@ -390,5 +391,121 @@ public class Attack : MonoBehaviour
         camIceSpellCamTwo.Priority = 30;
         camFrogZoom.transform.rotation = startRot;
         
+    }
+
+
+    IEnumerator SpawnIceVerTwo(Vector3 startPos, Vector3 endPos, Vector3 direction)
+    {
+        iceTrailLead.transform.position = gameObject.transform.position;
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Attack Trigger Set");
+        animator.SetTrigger("AttackTrigger");
+        Renderer rend = icePrefab.GetComponent<Renderer>();
+        Vector3 scale = rend.bounds.size;
+        float slope = direction.y / direction.x;
+        float dist;
+        /*if (slope > 1f)
+        { //y is larger than x
+            dist = scale.y * scale.y + (scale.x / slope) * (scale.x / slope);
+            dist = Mathf.Sqrt(dist);
+        }
+        else
+        { //x is larger than y
+            dist = scale.x * scale.x + (scale.y * slope) * (scale.y * slope);
+            dist = Mathf.Sqrt(dist);
+        }*/
+        dist = iceSpacing;
+        ArrayList iceObjects = new ArrayList();
+        int numSteps = (int)(direction.magnitude / dist);
+        yield return new WaitForSeconds(1.5f);
+        StartCoroutine(CamFollowIceSpell());
+        yield return new WaitForSeconds(0.5f);
+        for (int i = 0; i < numSteps - 1; i++)
+        {
+            Quaternion tilt;
+            float xTilt;
+            UnityEngine.Vector3 spawnPos = startPos + (direction / numSteps) * i;
+            iceTrailLead.transform.position = new Vector3(spawnPos.x, 1.2f, spawnPos.z);
+
+            float yTilt = UnityEngine.Random.Range(-7.5f, -7.5f);
+            float zTilt = UnityEngine.Random.Range(-7.5f, -7.5f);
+            switch (i % 4)
+            {
+                case 0:
+                    tilt = Quaternion.Euler(0f, yTilt, zTilt);
+                    break;
+                case 1:
+                    xTilt = UnityEngine.Random.Range(10f, 20f);
+                    tilt = Quaternion.Euler(xTilt, yTilt, zTilt);
+                    spawnPos -= new Vector3(0f, 0f, UnityEngine.Random.Range(0.5f, 0.75f));
+                    break;
+                case 2:
+                    xTilt = UnityEngine.Random.Range(-10f, -20f);
+                    tilt = Quaternion.Euler(xTilt, yTilt, zTilt);
+                    spawnPos += new Vector3(0f, 0f, UnityEngine.Random.Range(0.5f, 0.75f));
+                    break;
+                case 3:
+                    tilt = Quaternion.Euler(0f, yTilt, zTilt);
+                    break;
+                default:
+                    tilt = Quaternion.Euler(0f, yTilt, zTilt);
+                    break;
+
+            }
+            UnityEngine.Quaternion rotation = UnityEngine.Quaternion.LookRotation(direction);
+            tilt *= rotation;
+            spawnPos.y -= scale.y;
+
+            GameObject ice = Instantiate(icePrefab, spawnPos, tilt);
+            ice.GetComponent<IceController>().RegisterInitHeight(spawnPos.y, scale.y);
+            iceObjects.Add(ice);
+            yield return new WaitForSeconds(0.075f);
+        }
+        ArrayList iceObjectsBig = new ArrayList();
+        for (int i = 0; i < 3; i++)
+        {
+            Quaternion tilt = Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(25f, 35f));
+            Quaternion rot = Quaternion.Euler(0f, i / 3f * 360 + UnityEngine.Random.Range(-5f, 5f), 0f);
+            tilt = rot * tilt;
+            Vector3 spawnPos = new Vector3(enemy.transform.position.x, 0f, enemy.transform.position.z);
+            spawnPos.y -= scale.y * 2f;
+            //spawnPos -= transform.right * 2f;
+            GameObject BigIce = Instantiate(icePrefab, spawnPos, tilt);
+            BigIce.transform.position += BigIce.transform.right * 2f;
+            BigIce.transform.localScale = new Vector3(2f, 2f, 2f);
+            iceObjectsBig.Add(BigIce);
+            BigIce.GetComponent<IceController>().RegisterInitHeight(spawnPos.y, scale.y /** 2*/);
+        }
+        yield return new WaitForSeconds(0.075f);
+
+        yield return new WaitForSeconds(2f);
+        for (int i = iceObjects.Count - 1; i >= 0; i--)
+        {
+            GameObject ice = (GameObject)iceObjects[i];
+            if (ice != null)
+            {
+                ice.GetComponent<IceController>().DestroyIce();
+            }
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        for (int i = iceObjectsBig.Count - 1; i >= 0; i--)
+        {
+            GameObject ice = (GameObject)iceObjectsBig[i];
+            if (ice != null)
+            {
+                ice.GetComponent<IceController>().DestroyIce();
+            }
+        }
+
+        yield return new WaitForSeconds(1f);
+        camGameplay.Priority = 20;
+        camFrogZoom.Priority = 10;
+        camFrogAttack.Priority = 10;
+        camIceSpellCamTwo.Priority = 10;
+        EnemyHitCam.Priority = 10;
+        MidIceCam.Priority = 10;
+        yield return new WaitForSeconds(0.75f);
     }
 }
