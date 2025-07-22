@@ -8,7 +8,7 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Attack : MonoBehaviour
+public class EnemyAttack : MonoBehaviour
 {
     //Cam Shenanigans
     public CinemachineVirtualCamera camGameplay;
@@ -52,7 +52,7 @@ public class Attack : MonoBehaviour
     void Update()
     {
         // Replace KeyCode.Space with your preferred input
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.J))
         {
             PerformAttack();
         }
@@ -209,7 +209,7 @@ public class Attack : MonoBehaviour
         iceTrailLead.transform.position = gameObject.transform.position + new Vector3(0f, 1.2f, 0f);
         yield return new WaitForSeconds(0.5f);
         Debug.Log("Attack Trigger Set");
-        animator.SetTrigger("AttackTrigger");
+        animator.SetTrigger("EnemyAttack");
         Renderer rend = icePrefab.GetComponent<Renderer>();
         Vector3 scale = rend.bounds.size;
         float slope = direction.y / direction.x;
@@ -291,13 +291,13 @@ public class Attack : MonoBehaviour
             iceObjectsBig.Add(BigIce);
             BigIce.GetComponent<IceController>().RegisterInitHeight(spawnPos.y, scale.y /** 2*/);
         }
-        enemy.GetComponent<Animator>().SetTrigger("EnemyAttacked");
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDTrigger");
         yield return new WaitForSeconds(0.075f);
 
         yield return new WaitForSeconds(0.2f);
 
         yield return new WaitForSeconds(1.8f);
-        enemy.GetComponent<Animator>().ResetTrigger("EnemyAttacked");
+        enemy.GetComponent<Animator>().ResetTrigger("AttackEDTrigger");
         for (int i = iceObjects.Count - 1; i >= 0; i--)
         {
             GameObject ice = (GameObject)iceObjects[i];
@@ -318,7 +318,7 @@ public class Attack : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(0.5f);
-        enemy.GetComponent<Animator>().SetTrigger("EnemyAttackedToIdle");
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDToIdle");
         yield return new WaitForSeconds(0.5f);
         camGameplay.Priority = 20;
         camFrogZoom.Priority = 10;
