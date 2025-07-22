@@ -819,6 +819,10 @@ MonoBehaviour:
   animLength: 1.5
   iceSpacing: 0.33
   iceTrailLead: {fileID: 380283778}
+  MagicCirclePrefab: {fileID: 8984804805187261256, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+  CirclePos: {x: 0.916, y: 1.8, z: 0}
+  CircleRot: {x: 0, y: -0.70710677, z: 0, w: 0.70710677}
+  CircleScale: {x: 1, y: 1, z: 1}
 --- !u!1 &451389445
 GameObject:
   m_ObjectHideFlags: 0
@@ -1950,6 +1954,87 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &1915209286
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.075
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.075
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.075
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.916
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212897671431090034, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5901884119270000650, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4262ac4eabd1541ceaf578c55433c4d4, type: 2}
+    - target: {fileID: 8984804805187261256, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_Name
+      value: IceCircle
+      objectReference: {fileID: 0}
+    - target: {fileID: 8984804805187261256, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
 --- !u!1001 &2125413980
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2103,3 +2188,4 @@ SceneRoots:
   - {fileID: 1058404519}
   - {fileID: 679769273}
   - {fileID: 380283779}
+  - {fileID: 1915209286}

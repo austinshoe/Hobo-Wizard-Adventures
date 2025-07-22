@@ -37,6 +37,12 @@ public class Attack : MonoBehaviour
     private AttackType currentAttackType = AttackType.Ice;
     Quaternion startRot;
 
+    public GameObject MagicCirclePrefab;
+    private GameObject magicCircleInstance;
+    public Vector3 CirclePos;
+    public Quaternion CircleRot;
+    public Vector3 CircleScale;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -373,6 +379,7 @@ public class Attack : MonoBehaviour
         camGameplay.Priority = 10;
         startRot = camFrogZoom.transform.rotation;
         Quaternion endRot = Quaternion.Euler(startRot.eulerAngles + new Vector3(-20f, 0f, 0f));
+        StartCoroutine(SpawnMagicCircle());
         float t = 0f;
         while (t < 1f)
         {
@@ -380,6 +387,12 @@ public class Attack : MonoBehaviour
             t += Time.deltaTime;
             yield return null;
         }
+    }
+
+    IEnumerator SpawnMagicCircle()
+    {
+        yield return new WaitForSeconds(0.5f);
+        magicCircleInstance = Instantiate(MagicCirclePrefab, CirclePos, CircleRot);
     }
 
     IEnumerator CamFollowIceSpell()
@@ -418,7 +431,11 @@ public class Attack : MonoBehaviour
         int numSteps = (int)(direction.magnitude / dist);
         yield return new WaitForSeconds(1.5f);
         StartCoroutine(CamFollowIceSpell());
+
+        StartCoroutine(DestroyMagicCircle());
+
         yield return new WaitForSeconds(0.66f);
+
         float totalTime = numSteps * 0.05f;
         StartCoroutine(IceFollowTrail(startPos, direction, totalTime));
         for (int i = 0; i < numSteps - 1; i++)
@@ -532,5 +549,16 @@ public class Attack : MonoBehaviour
 
         // Snap to exact position at the end
         iceTrailLead.transform.position = targetPos;
+    }
+
+    IEnumerator DestroyMagicCircle()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (magicCircleInstance != null)
+        {
+            magicCircleInstance.GetComponent<Magic_Circle>().DestroyCircle();
+            yield return new WaitForSeconds(1f);
+            Destroy(magicCircleInstance, 0.125f);
+        }
     }
 }
