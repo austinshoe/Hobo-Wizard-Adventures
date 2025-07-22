@@ -59,7 +59,7 @@ public class IceController : MonoBehaviour
         float redStep = emissionCol.r / SLIDE_FRAMES;
         float greenStep = emissionCol.g / SLIDE_FRAMES;
         float blueStep = emissionCol.b / SLIDE_FRAMES;
-        for (int i = 0; i < SLIDE_FRAMES; i++)
+        for (int i = 0; i < SLIDE_FRAMES - 2; i++)
         {
             Color emissionColor = mat.GetColor("_EmissionColor");
             emissionColor.r = Mathf.Clamp(emissionColor.r, 0f, 1f);
@@ -71,6 +71,7 @@ public class IceController : MonoBehaviour
             mat.SetColor("_EmissionColor", emissionColor);
             yield return new WaitForSeconds(0.75f / SLIDE_FRAMES);
         }
+        yield return new WaitForSeconds(2 * 0.75f / SLIDE_FRAMES);
         // mat.DisableKeyword("_EMISSION");
     }
 

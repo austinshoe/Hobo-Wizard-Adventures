@@ -384,19 +384,18 @@ public class Attack : MonoBehaviour
 
     IEnumerator CamFollowIceSpell()
     {
-        yield return null;
-
+        camIceSpellCamTwo.Priority = 30;
         camFrogZoom.Priority = 10;
         camGameplay.Priority = 20;
-        camIceSpellCamTwo.Priority = 30;
         camFrogZoom.transform.rotation = startRot;
-        
+        yield return null;
+
     }
 
 
     IEnumerator SpawnIceVerTwo(Vector3 startPos, Vector3 endPos, Vector3 direction)
     {
-        iceTrailLead.transform.position = gameObject.transform.position;
+        iceTrailLead.transform.position = gameObject.transform.position + new Vector3(0f, 1.2f, 0f);
         yield return new WaitForSeconds(0.5f);
         Debug.Log("Attack Trigger Set");
         animator.SetTrigger("AttackTrigger");
@@ -419,13 +418,14 @@ public class Attack : MonoBehaviour
         int numSteps = (int)(direction.magnitude / dist);
         yield return new WaitForSeconds(1.5f);
         StartCoroutine(CamFollowIceSpell());
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.66f);
+        float totalTime = numSteps * 0.05f;
+        StartCoroutine(IceFollowTrail(startPos, direction, totalTime));
         for (int i = 0; i < numSteps - 1; i++)
         {
             Quaternion tilt;
             float xTilt;
             UnityEngine.Vector3 spawnPos = startPos + (direction / numSteps) * i;
-            iceTrailLead.transform.position = new Vector3(spawnPos.x, 1.2f, spawnPos.z);
 
             float yTilt = UnityEngine.Random.Range(-7.5f, -7.5f);
             float zTilt = UnityEngine.Random.Range(-7.5f, -7.5f);
@@ -459,7 +459,7 @@ public class Attack : MonoBehaviour
             GameObject ice = Instantiate(icePrefab, spawnPos, tilt);
             ice.GetComponent<IceController>().RegisterInitHeight(spawnPos.y, scale.y);
             iceObjects.Add(ice);
-            yield return new WaitForSeconds(0.075f);
+            yield return new WaitForSeconds(0.05f);
         }
         ArrayList iceObjectsBig = new ArrayList();
         for (int i = 0; i < 3; i++)
@@ -476,9 +476,13 @@ public class Attack : MonoBehaviour
             iceObjectsBig.Add(BigIce);
             BigIce.GetComponent<IceController>().RegisterInitHeight(spawnPos.y, scale.y /** 2*/);
         }
+        enemy.GetComponent<Animator>().SetTrigger("EnemyAttacked");
         yield return new WaitForSeconds(0.075f);
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.2f);
+
+        yield return new WaitForSeconds(1.8f);
+        enemy.GetComponent<Animator>().ResetTrigger("EnemyAttacked");
         for (int i = iceObjects.Count - 1; i >= 0; i--)
         {
             GameObject ice = (GameObject)iceObjects[i];
@@ -498,14 +502,35 @@ public class Attack : MonoBehaviour
                 ice.GetComponent<IceController>().DestroyIce();
             }
         }
-
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
+        enemy.GetComponent<Animator>().SetTrigger("EnemyAttackedToIdle");
+        yield return new WaitForSeconds(0.5f);
         camGameplay.Priority = 20;
         camFrogZoom.Priority = 10;
         camFrogAttack.Priority = 10;
         camIceSpellCamTwo.Priority = 10;
         EnemyHitCam.Priority = 10;
         MidIceCam.Priority = 10;
+        //enemy.GetComponent<Animator>().ResetTrigger("EnemyAttackedToIdle");
         yield return new WaitForSeconds(0.75f);
+    }
+
+    IEnumerator IceFollowTrail(Vector3 startPos, Vector3 direction, float totalTime)
+    {
+        Vector3 targetPos = startPos + direction;
+        Vector3 start = iceTrailLead.transform.position;
+        float elapsed = 0f;
+
+        while (elapsed < totalTime)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / totalTime;
+            // Smooth movement
+            iceTrailLead.transform.position = Vector3.Lerp(start, targetPos, t);
+            yield return null;
+        }
+
+        // Snap to exact position at the end
+        iceTrailLead.transform.position = targetPos;
     }
 }
