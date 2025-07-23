@@ -2,14 +2,14 @@ using System.Collections;
 using Cinemachine;
 using Unity.Mathematics;
 
-
-
 //using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyAttack : MonoBehaviour
+public class EnemyAttack : MonoBehaviour, GenericAttack
 {
+    private GameObject strongIceInstance;
+    public GameObject strongIce;
     //Cam Shenanigans
     public CinemachineVirtualCamera camGameplay;
     public CinemachineVirtualCamera camFrogZoom;
@@ -23,18 +23,10 @@ public class EnemyAttack : MonoBehaviour
     public float animLength = 1.5f;
     [SerializeField] float iceSpacing; //Spacing between ice blocks
     public GameObject iceTrailLead;
-    public enum AttackType
-    {
-        Water,
-        Ice,
-        Fire,
-        Lightning,
-        Earth,
-        Air,
-        Shadow,
-        Light,
-    }
-    private AttackType currentAttackType = AttackType.Ice;
+
+    public Move.Effect currentMoveType = Move.Effect.Weak;
+
+    private Move.Type currentAttackType = Move.Type.Ice;
     Quaternion startRot;
 
     public GameObject MagicCirclePrefab;
@@ -54,14 +46,21 @@ public class EnemyAttack : MonoBehaviour
         // Replace KeyCode.Space with your preferred input
         if (Input.GetKeyDown(KeyCode.J))
         {
+            SetMove(Move.Type.Ice, Move.Effect.Weak);
             PerformAttack();
         }
+        else if (Input.GetKeyDown(KeyCode.K))
+        {
+            SetMove(Move.Type.Ice, Move.Effect.Strong);
+            PerformAttack();
+            
+        }
     }
-    private void PerformAttack()
+    public void PerformAttack()
     {
         switch (currentAttackType)
         {
-            case AttackType.Ice:
+            case Move.Type.Ice:
                 PerformAttackIce();
                 break;
             // Add cases for other attack types as needed
@@ -70,7 +69,107 @@ public class EnemyAttack : MonoBehaviour
                 break;
         }
     }
-    private void PerformAttackIce()
+
+    public void PerformAttackIce()
+    {
+        switch (currentMoveType)
+        {
+            case Move.Effect.Weak:
+                PerformAttackIceWeak();
+                break;
+            case Move.Effect.Strong:
+                PerformAttackIceStrong();
+                break;
+            case Move.Effect.Status:
+                // Implement status ice attack logic here
+                break;
+            case Move.Effect.Shield:
+                // Implement shield ice attack logic here
+                break;
+            case Move.Effect.WildCard:
+                // Implement wild card ice attack logic here
+                break;
+            default:
+                Debug.LogWarning("Ice attack effect not implemented: " + currentMoveType);
+                break;
+        }
+    }
+
+
+    private void PerformAttackIceStrong()
+    {
+        Vector3 startPos = new Vector3(7.5f - 2.27f, 5.46f, 0f);
+        Vector3 endPos = enemy.transform.position;
+        StartCoroutine(ZoomCamInSpellCast());
+        StartCoroutine(AttackIceStrong(startPos, endPos));
+    }
+
+    IEnumerator AttackIceStrong(Vector3 startPos, Vector3 endPos)
+    {
+        iceTrailLead.transform.position = new Vector3(3.75f, 3f, 0f);
+        //camIceSpellCamTwo.transform.position = new Vector3(4f, 2.4f, -7.5f);
+        camIceSpellCamTwo.transform.position = new Vector3(-0.5f, 1.2f, -5f);
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Attack Trigger Set");
+        animator.SetTrigger("EnemyAttack");
+        yield return new WaitForSeconds(0.5f); //1.66s left
+        Quaternion magicCircleRotTo = Quaternion.Euler(-45f, 90f, 0f);
+        Vector3 magicCircleScale = new Vector3(0.153225f, 0.153225f, 0.153225f);
+        magicCircleScale = magicCircleScale * 1.5f;
+
+        Vector3 initialPosition = magicCircleInstance.transform.position;
+        Quaternion initialRotation = magicCircleInstance.transform.rotation;
+        Vector3 initialScale = magicCircleInstance.transform.localScale;
+        camIceSpellCamTwo.Priority = 20;
+        camFrogZoom.Priority = 10;
+        camGameplay.Priority = 10;
+
+        float d = 1f;
+        float t = 0f;
+        while (t < d)
+        {
+            float normalizedTime = t / d;
+
+            magicCircleInstance.transform.position = Vector3.Lerp(initialPosition, startPos, normalizedTime);
+            magicCircleInstance.transform.rotation = Quaternion.Lerp(initialRotation, magicCircleRotTo, normalizedTime);
+            magicCircleInstance.transform.localScale = Vector3.Lerp(initialScale, magicCircleScale, normalizedTime);
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        magicCircleInstance.transform.position = startPos;
+        magicCircleInstance.transform.rotation = magicCircleRotTo;
+        magicCircleInstance.transform.localScale = magicCircleScale;
+        yield return new WaitForSeconds(0.66f);
+        strongIceInstance = Instantiate(strongIce, startPos, Quaternion.Euler(45f, -90f, 90f));
+        strongIceInstance.GetComponent<ParticleSystem>().Play();
+        yield return new WaitForSeconds(0.5f);
+        strongIceInstance.GetComponent<StrongIceController>().ShootShard(endPos);
+        yield return new WaitForSeconds(0.375f);
+        //set trigger
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDTrigger");
+        yield return new WaitForSeconds(0.125f);
+
+        StartCoroutine(DestroyMagicCircle());
+
+        yield return new WaitForSeconds(0.25f);
+        enemy.GetComponent<Animator>().ResetTrigger("AttackEDTrigger");
+
+        camGameplay.Priority = 20;
+        camIceSpellCamTwo.Priority = 10;
+        camFrogZoom.Priority = 10;
+        camFrogZoom.transform.rotation = startRot;
+        yield return new WaitForSeconds(1f);
+        strongIceInstance.GetComponent<StrongIceController>().DestroyIce();
+        yield return new WaitForSeconds(0.5f);
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDToIdle");
+        Destroy(strongIceInstance);
+        yield return new WaitForSeconds(0.5f);
+    }
+
+
+    private void PerformAttackIceWeak()
     {
         Vector3 startPos = this.transform.position;
         Vector3 endPos = enemy.transform.position;
@@ -358,6 +457,12 @@ public class EnemyAttack : MonoBehaviour
             yield return new WaitForSeconds(1f);
             Destroy(magicCircleInstance, 0.125f);
         }
+    }
+
+    public void SetMove(Move.Type moveType, Move.Effect effect)
+    {
+        currentAttackType = moveType;
+        currentMoveType = effect;
     }
 
     /*
