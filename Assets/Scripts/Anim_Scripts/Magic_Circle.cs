@@ -65,6 +65,7 @@ public class Magic_Circle : MonoBehaviour
                 t += Time.deltaTime;
                 yield return null;
             }
+            ring.transform.localScale = Vector3.one;
             yield return new WaitForSeconds(0.125f);
         }
     }

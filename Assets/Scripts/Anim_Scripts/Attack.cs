@@ -10,6 +10,8 @@ using UnityEngine;
 
 public class Attack : MonoBehaviour, GenericAttack
 {
+    private GameObject fireColumnInstance;
+    public GameObject fireColumnPrefab;
     private GameObject strongIceInstance;
     //Cam Shenanigans
     public CinemachineVirtualCamera camGameplay;
@@ -30,7 +32,7 @@ public class Attack : MonoBehaviour, GenericAttack
     private Move.Type currentAttackType = Move.Type.Ice;
     Quaternion startRot;
 
-    public GameObject MagicCirclePrefab;
+    public GameObject[] MagicCirclePrefabs;
     private GameObject magicCircleInstance;
     public Vector3 CirclePos;
     public Quaternion CircleRot;
@@ -55,7 +57,12 @@ public class Attack : MonoBehaviour, GenericAttack
         {
             SetMove(Move.Type.Ice, Move.Effect.Strong);
             PerformAttack();
-            
+
+        }
+        else if (Input.GetKeyDown(KeyCode.F))
+        {
+            SetMove(Move.Type.Fire, Move.Effect.Weak);
+            PerformAttack();
         }
     }
     public void PerformAttack()
@@ -66,10 +73,91 @@ public class Attack : MonoBehaviour, GenericAttack
                 PerformAttackIce();
                 break;
             // Add cases for other attack types as needed
+            case Move.Type.Fire:
+                PerformAttackFire();
+                break;
             default:
                 Debug.LogWarning("Attack type not implemented: " + currentAttackType);
                 break;
         }
+    }
+
+    public void PerformAttackFire()
+    {
+        switch (currentMoveType)
+        {
+            case Move.Effect.Weak:
+                PerformAttackFireWeak();
+                break;
+            case Move.Effect.Strong:
+                // Implement strong ice attack logic here
+                break;
+            case Move.Effect.Status:
+                // Implement status ice attack logic here
+                break;
+            case Move.Effect.Shield:
+                // Implement shield ice attack logic here
+                break;
+            case Move.Effect.WildCard:
+                // Implement wild card ice attack logic here
+                break;
+            default:
+                Debug.LogWarning("Ice attack effect not implemented: " + currentMoveType);
+                break;
+        }
+    }
+
+    public void PerformAttackFireWeak()
+    {
+        StartCoroutine(ZoomCamInSpellCast());
+        StartCoroutine(AttackFireWeak());
+    }
+
+    IEnumerator AttackFireWeak()
+    {
+        iceTrailLead.transform.position = new Vector3(3.75f, 1.2f, 0f);
+        camIceSpellCamTwo.transform.position = new Vector3(-1f, 1.2f, -2f);
+
+        //iceTrailLead.transform.position = new Vector3(4f, 1.2f, 0f);
+        //camIceSpellCamTwo.transform.position = new Vector3(2.75f, 2.4f, -5f);
+
+        // iceTrailLead.transform.position = new Vector3(3.75f, 1.2f, 0f);
+        //iceTrailLead.transform.position = enemy.transform.position;
+        //camIceSpellCamTwo.transform.position = new Vector3(3.75f, 2.4f, -4f);
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Attack Trigger Set");
+        animator.SetTrigger("AttackTrigger");
+        yield return new WaitForSeconds(0.5f);
+
+        yield return new WaitForSeconds(0.5f);
+
+        camIceSpellCamTwo.Priority = 20;
+        camFrogZoom.Priority = 10;
+        camGameplay.Priority = 10;
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(DestroyMagicCircle());
+        Vector3 mCircleSpawnPos = enemy.transform.position + Vector3.up * 0.1f;
+        GameObject floorCircle = Instantiate(MagicCirclePrefabs[(int)currentAttackType], mCircleSpawnPos, Quaternion.Euler(90f, 0f, 0f));
+        floorCircle.transform.localScale = Vector3.one * 0.2f;
+        fireColumnInstance = Instantiate(fireColumnPrefab, enemy.transform.position, Quaternion.identity);
+        yield return new WaitForSeconds(0.66f);
+        fireColumnInstance.GetComponent<FireColumnController>().SpawnPenta(fireColumnInstance.transform.position, 1.5f);
+        Vector3 currIceTrailPos = iceTrailLead.transform.position;
+        Vector3 currCamPos = camIceSpellCamTwo.transform.position;
+        float t = 0f;
+        while (t < 0.5f)
+        {
+            float normT = t / 0.5f;
+            iceTrailLead.transform.position = Vector3.Lerp(currIceTrailPos, enemy.transform.position + Vector3.up * 1.2f, normT);
+            camIceSpellCamTwo.transform.position = Vector3.Lerp(currCamPos, currIceTrailPos, normT);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        iceTrailLead.transform.position = enemy.transform.position + Vector3.up * 1.2f;
+        camIceSpellCamTwo.transform.position = currIceTrailPos;
+        yield return null;
+        fireColumnInstance.GetComponent<FireColumnController>().ContractPenta();
     }
 
     public void PerformAttackIce()
@@ -291,7 +379,7 @@ public class Attack : MonoBehaviour, GenericAttack
     IEnumerator SpawnMagicCircle()
     {
         yield return new WaitForSeconds(0.5f);
-        magicCircleInstance = Instantiate(MagicCirclePrefab, CirclePos, CircleRot);
+        magicCircleInstance = Instantiate(MagicCirclePrefabs[(int) currentAttackType], CirclePos, CircleRot);
     }
 
     IEnumerator CamFollowIceSpell()
