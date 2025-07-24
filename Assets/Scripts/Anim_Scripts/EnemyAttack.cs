@@ -5,9 +5,12 @@ using Unity.Mathematics;
 //using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EnemyAttack : MonoBehaviour, GenericAttack
 {
+    private GameObject fireColumnInstance;
+    public GameObject fireColumnPrefab;
     private GameObject strongIceInstance;
     public GameObject strongIce;
     //Cam Shenanigans
@@ -29,7 +32,7 @@ public class EnemyAttack : MonoBehaviour, GenericAttack
     private Move.Type currentAttackType = Move.Type.Ice;
     Quaternion startRot;
 
-    public GameObject MagicCirclePrefab;
+    public GameObject[] MagicCirclePrefabs;
     private GameObject magicCircleInstance;
     public Vector3 CirclePos;
     public Quaternion CircleRot;
@@ -55,6 +58,11 @@ public class EnemyAttack : MonoBehaviour, GenericAttack
             PerformAttack();
             
         }
+        else if (Input.GetKeyDown(KeyCode.I))
+        {
+            SetMove(Move.Type.Fire, Move.Effect.Weak);
+            PerformAttack();
+        }
     }
     public void PerformAttack()
     {
@@ -64,11 +72,177 @@ public class EnemyAttack : MonoBehaviour, GenericAttack
                 PerformAttackIce();
                 break;
             // Add cases for other attack types as needed
+            case Move.Type.Fire:
+                PerformAttackFire();
+                break;
             default:
                 Debug.LogWarning("Attack type not implemented: " + currentAttackType);
                 break;
         }
     }
+
+    public void PerformAttackFire()
+    {
+        switch (currentMoveType)
+        {
+            case Move.Effect.Weak:
+                PerformAttackFireWeak();
+                break;
+            case Move.Effect.Strong:
+                // Implement strong ice attack logic here
+                break;
+            case Move.Effect.Status:
+                // Implement status ice attack logic here
+                break;
+            case Move.Effect.Shield:
+                // Implement shield ice attack logic here
+                break;
+            case Move.Effect.WildCard:
+                // Implement wild card ice attack logic here
+                break;
+            default:
+                Debug.LogWarning("Ice attack effect not implemented: " + currentMoveType);
+                break;
+        }
+    }
+
+    public void PerformAttackFireWeak()
+    {
+        StartCoroutine(ZoomCamInSpellCast());
+        StartCoroutine(AttackFireWeak());
+    }
+
+    IEnumerator AttackFireWeak()
+    {
+        iceTrailLead.transform.position = new Vector3(3.75f, 1.2f, 0f);
+        camIceSpellCamTwo.transform.position = new Vector3(8.5f, 1.2f, -2f);
+
+        //iceTrailLead.transform.position = new Vector3(4f, 1.2f, 0f);
+        //camIceSpellCamTwo.transform.position = new Vector3(2.75f, 2.4f, -5f);
+
+        // iceTrailLead.transform.position = new Vector3(3.75f, 1.2f, 0f);
+        //iceTrailLead.transform.position = enemy.transform.position;
+        //camIceSpellCamTwo.transform.position = new Vector3(3.75f, 2.4f, -4f);
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Attack Trigger Set");
+        animator.SetTrigger("EnemyAttack");
+        yield return new WaitForSeconds(0.5f);
+
+        yield return new WaitForSeconds(0.5f);
+
+        camIceSpellCamTwo.Priority = 20;
+        camFrogZoom.Priority = 10;
+        camGameplay.Priority = 10;
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(DestroyMagicCircle());
+        Vector3 mCircleSpawnPos = enemy.transform.position + Vector3.up * 0.1f;
+        GameObject floorCircle = Instantiate(MagicCirclePrefabs[(int)currentAttackType], mCircleSpawnPos, Quaternion.Euler(90f, 0f, 0f));
+        floorCircle.transform.localScale = Vector3.one * 0.2f;
+        fireColumnInstance = Instantiate(fireColumnPrefab, enemy.transform.position, Quaternion.identity);
+        yield return new WaitForSeconds(0.66f);
+        fireColumnInstance.GetComponent<FireColumnController>().SpawnPenta(fireColumnInstance.transform.position, 1.5f);
+        Vector3 currIceTrailPos = iceTrailLead.transform.position;
+        Vector3 currCamPos = camIceSpellCamTwo.transform.position;
+        float t = 0f;
+        while (t < 0.5f)
+        {
+            float normT = t / 0.5f;
+            iceTrailLead.transform.position = Vector3.Lerp(currIceTrailPos, enemy.transform.position + Vector3.up * 1.2f, normT);
+            camIceSpellCamTwo.transform.position = Vector3.Lerp(currCamPos, currIceTrailPos, normT);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        iceTrailLead.transform.position = enemy.transform.position + Vector3.up * 1.2f;
+        camIceSpellCamTwo.transform.position = currIceTrailPos;
+        yield return null;
+        fireColumnInstance.GetComponent<FireColumnController>().ContractPenta();
+        //2.25 for entire, 1.25 - 2.25 is nothing, big flame starts at 2.25
+        // -1.92, 1.2, -1.98
+        yield return new WaitForSeconds(0.5f);
+
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDTrigger");
+        yield return new WaitForSeconds(0.5f);
+        t = 0f;
+        Vector3 endCamPos = new Vector3(7.5f + 1.92f, 1.2f, -1.98f);
+        currCamPos = camIceSpellCamTwo.transform.position;
+        while (t < 0.75f)
+        {
+            float normT = t / 0.75f;
+            camIceSpellCamTwo.transform.position = Vector3.Lerp(currCamPos, endCamPos, normT);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.66f);
+
+        Vector3 originalPos = camIceSpellCamTwo.transform.localPosition;
+        Vector3 originalPos2 = iceTrailLead.transform.localPosition;
+        float elapsed = 0f;
+
+        while (elapsed < 0.5f)
+        {
+            float x = Random.Range(-1f, 1f) * 0.1f;
+            float y = Random.Range(-1f, 1f) * 0.1f;
+
+            camIceSpellCamTwo.transform.localPosition = originalPos + new Vector3(x, y, 0);
+            iceTrailLead.transform.localPosition = originalPos2 + new Vector3(x, y, 0);
+
+            elapsed += Time.deltaTime;
+
+            yield return null;
+        }
+
+        camIceSpellCamTwo.transform.localPosition = originalPos;
+        iceTrailLead.transform.localPosition = originalPos2;
+        yield return new WaitForSeconds(1.5f);
+        enemy.GetComponent<Animator>().ResetTrigger("AttackEDTrigger");
+        t = 0f;
+        originalPos = fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale;
+        originalPos2 = fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale;
+        while (t < 0.5f)
+        {
+            float normT = (0.5f - t) / 0.5f;
+            fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale = originalPos2 * normT;
+            fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale =  originalPos * normT;
+            t += Time.deltaTime;
+            yield return null;
+        }
+            fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale = Vector3.zero;
+            fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale =  Vector3.zero;
+        yield return new WaitForSeconds(0.125f);
+        floorCircle.GetComponent<Magic_Circle>().DestroyCircle();
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDToIdle");
+        yield return new WaitForSeconds(0.875f);
+        Destroy(fireColumnInstance);
+        Destroy(floorCircle);
+        camFrogZoom.transform.rotation = startRot;
+
+        camGameplay.Priority = 20;
+        camIceSpellCamTwo.Priority = 10;
+        camFrogZoom.Priority = 10;
+
+        /*
+        CinemachineImpulseSource ShakeEffDriver = gameObject.AddComponent<CinemachineImpulseSource>();
+        CinemachineImpulseDefinition ShakeEffDef = new CinemachineImpulseDefinition();
+        ShakeEffDef.m_ImpulseDuration = 2;
+        ShakeEffDef.m_AmplitudeGain = 1f;
+        ShakeEffDef.m_FrequencyGain = 20;
+        ShakeEffDef.m_RawSignal = Resources.Load<SignalSourceAsset>("Noise/6D Shake");
+        ShakeEffDef.m_PropagationSpeed = 343f;
+        ShakeEffDef.m_DissipationMode = CinemachineImpulseManager.ImpulseEvent.DissipationMode.LinearDecay;
+        ShakeEffDef.m_DissipationDistance = 30;
+        ShakeEffDriver.m_ImpulseDefinition = ShakeEffDef;
+        if (ShakeEffDef.m_RawSignal == null)
+        {
+            Debug.Log("Couldnt find ts brochacho");
+        }
+
+        ShakeEffDriver.GenerateImpulse(3f);
+        yield return new WaitForSeconds(2f);
+        */
+
+    }
+
 
     public void PerformAttackIce()
     {
@@ -289,7 +463,7 @@ public class EnemyAttack : MonoBehaviour, GenericAttack
     IEnumerator SpawnMagicCircle()
     {
         yield return new WaitForSeconds(0.5f);
-        magicCircleInstance = Instantiate(MagicCirclePrefab, CirclePos, CircleRot);
+        magicCircleInstance = Instantiate(MagicCirclePrefabs[(int) currentAttackType], CirclePos, CircleRot);
     }
 
     IEnumerator CamFollowIceSpell()
@@ -305,6 +479,7 @@ public class EnemyAttack : MonoBehaviour, GenericAttack
 
     IEnumerator SpawnIceVerTwo(Vector3 startPos, Vector3 endPos, Vector3 direction)
     {
+        camIceSpellCamTwo.transform.position = new Vector3(-2f, 1.2f, -3.5f);
         iceTrailLead.transform.position = gameObject.transform.position + new Vector3(0f, 1.2f, 0f);
         yield return new WaitForSeconds(0.5f);
         Debug.Log("Attack Trigger Set");
