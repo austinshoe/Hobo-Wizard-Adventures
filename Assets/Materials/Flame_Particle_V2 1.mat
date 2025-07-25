@@ -7,13 +7,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Flame_Particle_V2
+  m_Name: Flame_Particle_V2 1
   m_Shader: {fileID: 211, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHAPREMULTIPLY_ON
-  - _COLORCOLOR_ON
+  - _ALPHABLEND_ON
+  - _COLORADDSUBDIFF_ON
+  - _EMISSION
   - _FADING_ON
   m_InvalidKeywords:
   - _SURFACE_TYPE_TRANSPARENT
@@ -102,18 +103,18 @@ Material:
     - _CameraNearFadeDistance: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _ColorMode: 4
+    - _ColorMode: 1
     - _Cull: 0
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DistortionBlend: 0.5
+    - _DistortionBlend: 0
     - _DistortionEnabled: 0
-    - _DistortionStrength: 1
-    - _DistortionStrengthScaled: 0
-    - _DstBlend: 10
+    - _DistortionStrength: 0.2
+    - _DistortionStrengthScaled: 0.020000001
+    - _DstBlend: 1
     - _DstBlendAlpha: 10
-    - _EmissionEnabled: 0
+    - _EmissionEnabled: 1
     - _EnvironmentReflections: 1
     - _FlipbookMode: 0
     - _GlossMapScale: 0
@@ -122,7 +123,7 @@ Material:
     - _InvFade: 1
     - _LightingEnabled: 0
     - _Metallic: 0
-    - _Mode: 3
+    - _Mode: 4
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
@@ -133,7 +134,7 @@ Material:
     - _SoftParticlesFarFadeDistance: 1
     - _SoftParticlesNearFadeDistance: 1
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _SrcBlendAlpha: 1
     - _Surface: 1
     - _WorkflowMode: 1
@@ -143,7 +144,7 @@ Material:
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 0.061943885, g: 0.038155973, b: 0.034107786, a: 1}
+    - _EmissionColor: {r: 1, g: 0, b: 0.008962631, a: 1}
     - _SoftParticleFadeParams: {r: 1, g: Infinity, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _TintColor: {r: 1, g: 1, b: 1, a: 1}

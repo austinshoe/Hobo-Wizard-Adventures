@@ -903,6 +903,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e71f164c45f964cf49b0718c76794b8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sparkExplosionPrefab: {fileID: 4599578324785827528, guid: 0eab71244a48e4dbc92b3ca2f8a1ba8d, type: 3}
+  fireStormPrefab: {fileID: 1768817844602870201, guid: c400cd88d9e63434a880309ad785e3fa, type: 3}
   fireColumnPrefab: {fileID: 6869203767790310544, guid: e6aa4ab1e878e4c4e914763c76660e18, type: 3}
   camGameplay: {fileID: 1615542329}
   camFrogZoom: {fileID: 502222413}
@@ -1675,6 +1677,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8419ce8f509437fb7511dc0bbe05f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sparkExplosionPrefab: {fileID: 4599578324785827528, guid: 0eab71244a48e4dbc92b3ca2f8a1ba8d, type: 3}
+  fireStormPrefab: {fileID: 1768817844602870201, guid: c400cd88d9e63434a880309ad785e3fa, type: 3}
   fireColumnPrefab: {fileID: 6869203767790310544, guid: e6aa4ab1e878e4c4e914763c76660e18, type: 3}
   strongIce: {fileID: 1420331622514702689, guid: b090afedfa9474fa2a040cee3900935e, type: 3}
   camGameplay: {fileID: 1615542329}

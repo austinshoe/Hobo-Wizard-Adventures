@@ -9,6 +9,9 @@ using Random = UnityEngine.Random;
 
 public class EnemyAttack : MonoBehaviour, GenericAttack
 {
+    public GameObject sparkExplosionPrefab;
+    public GameObject fireStormPrefab;
+    private GameObject AttackOBJInstance; // used from now on to keep track of what would have been fire column instance, etc
     private GameObject fireColumnInstance;
     public GameObject fireColumnPrefab;
     private GameObject strongIceInstance;
@@ -63,6 +66,12 @@ public class EnemyAttack : MonoBehaviour, GenericAttack
             SetMove(Move.Type.Fire, Move.Effect.Weak);
             PerformAttack();
         }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            SetMove(Move.Type.Fire, Move.Effect.Strong);
+            PerformAttack();
+            
+        }
     }
     public void PerformAttack()
     {
@@ -89,7 +98,7 @@ public class EnemyAttack : MonoBehaviour, GenericAttack
                 PerformAttackFireWeak();
                 break;
             case Move.Effect.Strong:
-                // Implement strong ice attack logic here
+                PerformAttackFireStrong();
                 break;
             case Move.Effect.Status:
                 // Implement status ice attack logic here
@@ -104,6 +113,196 @@ public class EnemyAttack : MonoBehaviour, GenericAttack
                 Debug.LogWarning("Ice attack effect not implemented: " + currentMoveType);
                 break;
         }
+    }
+
+
+public void PerformAttackFireStrong()
+    {
+        StartCoroutine(ZoomCamInSpellCast());
+        StartCoroutine(AttackFireStrong());
+    }
+
+    IEnumerator AttackFireStrong()
+    {
+        Vector3 startPos = new Vector3(5.5f, 1.2f, 0f);
+        iceTrailLead.transform.position = startPos;
+        Vector3 camStartPos = new Vector3(7.25f, 2f, -3.68f);
+        camIceSpellCamTwo.transform.position = camStartPos;
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Attack Trigger Set");
+        animator.SetTrigger("EnemyAttack");
+        yield return new WaitForSeconds(2f);
+        StartCoroutine(DestroyMagicCircle());
+        AttackOBJInstance = Instantiate(fireStormPrefab, iceTrailLead.transform.position - Vector3.up * 0.2f, Quaternion.Euler(0f, 0f, 0f));
+        AttackOBJInstance.GetComponent<FireStormController>().Scale(Vector3.zero);
+        camIceSpellCamTwo.Priority = 20;
+        camFrogZoom.Priority = 10;
+        float t = 0f;
+        while (t < 0.6f)
+        {
+            float normT = t / 0.6f;
+            AttackOBJInstance.GetComponent<FireStormController>().Scale(Vector3.one * 0.25f * normT);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        AttackOBJInstance.GetComponent<FireStormController>().Scale(Vector3.one * 0.25f);
+        //yield return new WaitForSeconds(0.5f);
+
+        Vector3 stormStartPos = AttackOBJInstance.transform.position;
+        t = 0f;
+        Vector3 endCamPos = new Vector3(9.92f, 6.6f, -7.49f);
+        while (t < 0.5)
+        {
+            float normT = t / 0.5f;
+            iceTrailLead.transform.position = Vector3.Lerp(startPos, enemy.transform.position + Vector3.up * 1.2f, normT);
+            AttackOBJInstance.transform.position = Vector3.Lerp(stormStartPos, enemy.transform.position, normT);
+            camIceSpellCamTwo.transform.position = Vector3.Lerp(camStartPos, endCamPos, normT);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        iceTrailLead.transform.position = enemy.transform.position + Vector3.up * 1.2f;
+        AttackOBJInstance.transform.position = enemy.transform.position;
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDTrigger");
+        camIceSpellCamTwo.transform.position = endCamPos;
+        yield return new WaitForSeconds(0.5f);
+        Vector3 FireStormCurrScale = Vector3.one * 0.25f;
+        t = 0f;
+        FireStormController stormctrl = AttackOBJInstance.GetComponent<FireStormController>();
+        while (t < 0.5f)
+        {
+            float normT = t / 0.5f;
+            float easeOutT = 1f - Mathf.Pow(1f - normT, 3);
+            stormctrl.Scale(Vector3.Lerp(FireStormCurrScale, Vector3.one, easeOutT));
+            t += Time.deltaTime;
+            yield return null;
+
+        }
+        stormctrl.Scale(Vector3.one);
+        yield return new WaitForSeconds(0.5f);
+        fireColumnInstance = Instantiate(fireColumnPrefab, enemy.transform.position, Quaternion.identity);
+        //fireColumnInstance.GetComponent<FireColumnController>().SpawnPenta(fireColumnInstance.transform.position, 1.5f);
+        fireColumnInstance.GetComponent<FireColumnController>().SetEmittion(true);
+        yield return new WaitForSeconds(0.75f);
+        t = 0f;
+        camStartPos = camIceSpellCamTwo.transform.position;
+        endCamPos = new Vector3(2.14f, 1.43f, -1.62f);
+        while (t < 0.75f)
+        {
+            float normT = t / 0.75f;
+            stormctrl.Scale(Vector3.Lerp(Vector3.one, Vector3.one * 0.2f, normT));
+            camIceSpellCamTwo.transform.position = Vector3.Lerp(camStartPos, endCamPos, normT);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.5f);
+        stormctrl.Scale(Vector3.one * 0.2f);
+        camIceSpellCamTwo.transform.position = endCamPos;
+        Vector3 originalPos = camIceSpellCamTwo.transform.localPosition;
+        Vector3 originalPos2 = iceTrailLead.transform.localPosition;
+        Vector3 originalPos3 = fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale;
+        Vector3 originalPos4 = fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale;
+        t = 0f;
+        while (t < 0.25f)
+        {
+            float normT = t / 0.25f;
+            float x = Random.Range(-1f, 1f) * 0.05f;
+            float y = Random.Range(-1f, 1f) * 0.05f;
+
+            camIceSpellCamTwo.transform.localPosition = originalPos + new Vector3(x, y, 0);
+            iceTrailLead.transform.localPosition = originalPos2 + new Vector3(x, y, 0);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        t = 0f;
+        endCamPos = new Vector3(3.14f, 2.63f, -2.36f);
+        camStartPos = camIceSpellCamTwo.transform.position;
+        Vector3 stormPos = stormctrl.transform.position;
+        while (t < 2f)
+        {
+            float normT = t / 2f;
+            stormctrl.Scale(Vector3.Lerp(Vector3.one * 0.2f, Vector3.zero, normT));
+            stormctrl.transform.position = Vector3.Lerp(stormPos, stormPos + 1.2f * Vector3.up, normT);
+            fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale = originalPos3 * (1 + normT);
+            fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale = originalPos4 * (1 + normT);
+            float x = Random.Range(-1f, 1f) * 0.05f;
+            float y = Random.Range(-1f, 1f) * 0.05f;
+
+            originalPos = Vector3.Lerp(camStartPos, endCamPos, normT);
+            camIceSpellCamTwo.transform.localPosition = originalPos + new Vector3(x, y, 0);
+            iceTrailLead.transform.localPosition = originalPos2 + new Vector3(x, y, 0);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale = originalPos3 * 2f;
+        fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale = originalPos4 * 2f;
+        stormctrl.Scale(Vector3.zero);
+        camIceSpellCamTwo.transform.localPosition = endCamPos;
+        iceTrailLead.transform.localPosition = originalPos2;
+        yield return new WaitForSeconds(0.5f);
+        t = 0;
+        originalPos = fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale;
+        originalPos2 = fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale;
+        while (t < 0.75f)
+        {
+            float normT = (0.75f - t) / 0.75f;
+            fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale = originalPos2 * normT;
+            fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale = originalPos * normT;
+            t += Time.deltaTime;
+            yield return null;
+        }
+        fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale = Vector3.zero;
+        fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale = Vector3.zero;
+        GameObject expl = Instantiate(sparkExplosionPrefab, enemy.transform.position + Vector3.up * 1.2f, Quaternion.identity);
+        sparkExplosionPrefab.GetComponent<ParticleSystem>().Play();
+        yield return new WaitForSeconds(0.5f);
+        enemy.GetComponent<Animator>().ResetTrigger("AttackEDTrigger");
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDToIdle");
+        //fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale = Vector3.one * 2.5f;
+        //fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale = Vector3.one * 2.5f;
+        /* t = 0f;
+         while (t < 0.0625f)
+         {
+             float normT = t / 0.0625f;
+             stormctrl.Scale(Vector3.one * 5 * normT);
+             t += Time.deltaTime;
+             yield return null;
+         }
+         stormctrl.Scale(Vector3.one * 5);
+         yield return null;
+         stormctrl.FireStorm.GetComponent<ParticleSystem>().Stop();
+         stormctrl.EmberEffect.GetComponent<ParticleSystem>().Stop();
+         stormctrl.Smoke.GetComponent<ParticleSystem>().Stop();
+         stormctrl.Ashes.GetComponent<ParticleSystem>().Stop();*/
+        yield return new WaitForSeconds(0.5f);
+
+        /*t = 0f;
+        originalPos = camIceSpellCamTwo.transform.localPosition;
+        originalPos2 = iceTrailLead.transform.localPosition;
+        while (t < 0.125f)
+        {
+            float normT = (0.125f - t) / 0.125f;
+            float x = Random.Range(-1f, 1f) * 0.1f;
+            float y = Random.Range(-1f, 1f) * 0.1f;
+
+            camIceSpellCamTwo.transform.localPosition = originalPos + new Vector3(x, y, 0);
+            iceTrailLead.transform.localPosition = originalPos2 + new Vector3(x, y, 0);
+            fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale = Vector3.one * 2f * normT;
+            fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale = Vector3.one * 2f * normT;
+            t += Time.deltaTime;
+            yield return null;
+        }
+        fireColumnInstance.GetComponent<FireColumnController>().FlameEmitter.transform.localScale = Vector3.zero;
+        fireColumnInstance.GetComponent<FireColumnController>().EmberEmitter.transform.localScale = Vector3.zero;*/
+        Destroy(expl);
+        Destroy(fireColumnInstance);
+        Destroy(AttackOBJInstance);
+        yield return new WaitForSeconds(0.5f);
+        camFrogZoom.transform.rotation = startRot;
+        camGameplay.Priority = 20;
+        camIceSpellCamTwo.Priority = 10;
+        camFrogZoom.Priority = 10;
+        
     }
 
     public void PerformAttackFireWeak()
