@@ -366,7 +366,8 @@ public class Attack : MonoBehaviour, GenericAttack
         yield return new WaitForSeconds(0.5f);
 
         enemy.GetComponent<Animator>().SetTrigger("EnemyAttacked");
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         t = 0f;
         Vector3 endCamPos = new Vector3(-1.92f, 1.2f, -1.98f);
         currCamPos = camIceSpellCamTwo.transform.position;

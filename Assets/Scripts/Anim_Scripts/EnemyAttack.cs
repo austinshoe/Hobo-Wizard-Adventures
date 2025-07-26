@@ -361,7 +361,8 @@ public void PerformAttackFireStrong()
         yield return new WaitForSeconds(0.5f);
 
         enemy.GetComponent<Animator>().SetTrigger("AttackEDTrigger");
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         t = 0f;
         Vector3 endCamPos = new Vector3(7.5f + 1.92f, 1.2f, -1.98f);
         currCamPos = camIceSpellCamTwo.transform.position;

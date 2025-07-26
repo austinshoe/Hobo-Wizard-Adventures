@@ -75,7 +75,8 @@ public class FireColumnController : MonoBehaviour
             FireColumns[i].transform.position = transform.position;
         }
 
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         t = 0f;
         while (t < 0.25f)
         {
