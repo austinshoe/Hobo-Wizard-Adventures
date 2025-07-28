@@ -903,6 +903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e71f164c45f964cf49b0718c76794b8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lightningboltPrefab: {fileID: 3770354669504220102, guid: d7ee3cdf1ee944423bdc7549b8cd3fbd, type: 3}
   sparkExplosionPrefab: {fileID: 4599578324785827528, guid: 0eab71244a48e4dbc92b3ca2f8a1ba8d, type: 3}
   fireStormPrefab: {fileID: 1768817844602870201, guid: c400cd88d9e63434a880309ad785e3fa, type: 3}
   fireColumnPrefab: {fileID: 6869203767790310544, guid: e6aa4ab1e878e4c4e914763c76660e18, type: 3}
@@ -919,7 +920,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 8984804805187261256, guid: 6e2c4d31689a04bbb92951f0e8207ee5, type: 3}
   - {fileID: 384062264348070878, guid: b20795b5a690a4f3b9da6bf2045881ff, type: 3}
-  - {fileID: 0}
+  - {fileID: 6835496499146513943, guid: e2aea0833e26a4068bd03b257829ae11, type: 3}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

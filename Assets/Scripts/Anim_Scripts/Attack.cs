@@ -11,6 +11,7 @@ using Random = UnityEngine.Random;
 
 public class Attack : MonoBehaviour, GenericAttack
 {
+    public GameObject lightningboltPrefab;
     public GameObject sparkExplosionPrefab;
     public GameObject fireStormPrefab;
     private GameObject AttackOBJInstance; // used from now on to keep track of what would have been fire column instance, etc
@@ -74,7 +75,12 @@ public class Attack : MonoBehaviour, GenericAttack
         {
             SetMove(Move.Type.Fire, Move.Effect.Strong);
             PerformAttack();
-            
+
+        }
+        else if (Input.GetKeyDown(KeyCode.L))
+        {
+            SetMove(Move.Type.Lightning, Move.Effect.Weak);
+            PerformAttack();
         }
     }
     public void PerformAttack()
@@ -88,10 +94,63 @@ public class Attack : MonoBehaviour, GenericAttack
             case Move.Type.Fire:
                 PerformAttackFire();
                 break;
+            case Move.Type.Lightning:
+                PerformAttackLightning();
+                break;
             default:
                 Debug.LogWarning("Attack type not implemented: " + currentAttackType);
                 break;
         }
+    }
+
+    public void PerformAttackLightning()
+    {
+        switch (currentMoveType)
+        {
+            case Move.Effect.Weak:
+                PerformAttackLightningWeak();
+                break;
+            case Move.Effect.Strong:
+                //PerformAttackFireStrong();
+                break;
+            case Move.Effect.Status:
+                // Implement status ice attack logic here
+                break;
+            case Move.Effect.Shield:
+                // Implement shield ice attack logic here
+                break;
+            case Move.Effect.WildCard:
+                // Implement wild card ice attack logic here
+                break;
+            default:
+                Debug.LogWarning("Ice attack effect not implemented: " + currentMoveType);
+                break;
+        }
+    }
+
+    public void PerformAttackLightningWeak()
+    {
+        StartCoroutine(ZoomCamInSpellCast());
+        StartCoroutine(AttackLightningStrong());
+    }
+
+    IEnumerator AttackLightningStrong()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Attack Trigger Set");
+        animator.SetTrigger("AttackTrigger");
+        yield return new WaitForSeconds(1f);
+        AttackOBJInstance = Instantiate(lightningboltPrefab, magicCircleInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt = AttackOBJInstance.GetComponent<LightningBoltController>();
+        bolt.CreateBolt(magicCircleInstance.transform.position, new Vector3(enemy.transform.position.x, 1f, enemy.transform.position.z));
+        yield return new WaitForSeconds(0.06f);
+        GameObject AttackOBJInstance2 = Instantiate(lightningboltPrefab, magicCircleInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt2 = AttackOBJInstance2.GetComponent<LightningBoltController>();
+        bolt2.CreateBolt(magicCircleInstance.transform.position, new Vector3(enemy.transform.position.x, 1f, enemy.transform.position.z));
+        yield return new WaitForSeconds(0.06f);
+        GameObject AttackOBJInstance3 = Instantiate(lightningboltPrefab, magicCircleInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt3 = AttackOBJInstance3.GetComponent<LightningBoltController>();
+        bolt3.CreateBolt(magicCircleInstance.transform.position, new Vector3(enemy.transform.position.x, 1f, enemy.transform.position.z));
     }
 
     public void PerformAttackFire()
