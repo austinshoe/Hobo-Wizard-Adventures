@@ -10,6 +10,8 @@ public class LightningBoltController : MonoBehaviour
     private LineRenderer Bolt;
     private int posCount;
     public Material mat;
+    public GameObject LightningSparkPrefab;
+    public GameObject LightningSparkInstance;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     void Awake()
@@ -29,7 +31,7 @@ public class LightningBoltController : MonoBehaviour
 
     void FixedUpdate()
     {
-        
+
     }
 
     public void CreateBolt(Vector3 startPos, Vector3 endPos)
@@ -84,6 +86,12 @@ public class LightningBoltController : MonoBehaviour
 
     }
 
+    public void CreateSparkVFX(Vector3 enemyPos)
+    {
+        LightningSparkInstance = Instantiate(LightningSparkPrefab, enemyPos, Quaternion.identity);
+        LightningSparkInstance.GetComponent<ParticleSystem>().Play();
+    }
+
     IEnumerator BeginBoltUpdate(LineRenderer bolt)
     {
         posCount = bolt.positionCount;
@@ -106,5 +114,17 @@ public class LightningBoltController : MonoBehaviour
             bolt.SetPosition(segments - 1, endPos);
             yield return new WaitForSeconds(0.02f);
         }
+    }
+
+    public void DestroyBolt()
+    {
+        stopUpdate = true;
+        Destroy(Bolt, 0.02f);
+        if (LightningSparkInstance != null)
+        {
+            LightningSparkInstance.GetComponent<ParticleSystem>().Stop();
+            Destroy(LightningSparkInstance, 0.02f);
+        }
+
     }
 }

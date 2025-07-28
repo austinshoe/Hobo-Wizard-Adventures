@@ -84,12 +84,13 @@ public class Magic_Circle : MonoBehaviour
         Vector3 createPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         GameObject ShardEff = Instantiate(iceShardPrefab, transform.position, Quaternion.identity);
         ShardEff.GetComponent<ParticleSystem>().Play();
-        StartCoroutine(DieInAHoleBrochacho());
+        StartCoroutine(DieInAHoleBrochacho(ShardEff));
     }
     
-    IEnumerator DieInAHoleBrochacho()
+    IEnumerator DieInAHoleBrochacho(GameObject ShardEff)
     {
         yield return new WaitForSeconds(0.125f);
+        Destroy(ShardEff);
         Destroy(gameObject);
     }
 }
