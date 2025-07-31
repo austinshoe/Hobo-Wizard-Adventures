@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Cinemachine;
 using Unity.Mathematics;
 
@@ -9,6 +10,8 @@ using Random = UnityEngine.Random;
 
 public class EnemyAttack : MonoBehaviour, GenericAttack
 {
+    public GameObject thunderStormPrefab;
+    public GameObject lightningboltPrefab;
     public GameObject sparkExplosionPrefab;
     public GameObject fireStormPrefab;
     private GameObject AttackOBJInstance; // used from now on to keep track of what would have been fire column instance, etc
@@ -72,6 +75,16 @@ public class EnemyAttack : MonoBehaviour, GenericAttack
             PerformAttack();
             
         }
+        else if (Input.GetKeyDown(KeyCode.H))
+        {
+            SetMove(Move.Type.Lightning, Move.Effect.Weak);
+            PerformAttack();
+        }
+        else if (Input.GetKeyDown(KeyCode.T))
+        {
+            SetMove(Move.Type.Lightning, Move.Effect.Strong);
+            PerformAttack();
+        }
     }
     public void PerformAttack()
     {
@@ -84,11 +97,226 @@ public class EnemyAttack : MonoBehaviour, GenericAttack
             case Move.Type.Fire:
                 PerformAttackFire();
                 break;
+            case Move.Type.Lightning:
+                PerformAttackLightning();
+                break;
             default:
                 Debug.LogWarning("Attack type not implemented: " + currentAttackType);
                 break;
         }
     }
+
+    public void PerformAttackLightning()
+    {
+        switch (currentMoveType)
+        {
+            case Move.Effect.Weak:
+                PerformAttackLightningWeak();
+                break;
+            case Move.Effect.Strong:
+                PerformAttackLightningStrong();
+                break;
+            case Move.Effect.Status:
+                // Implement status ice attack logic here
+                break;
+            case Move.Effect.Shield:
+                // Implement shield ice attack logic here
+                break;
+            case Move.Effect.WildCard:
+                // Implement wild card ice attack logic here
+                break;
+            default:
+                Debug.LogWarning("Ice attack effect not implemented: " + currentMoveType);
+                break;
+        }
+    }
+
+    public void PerformAttackLightningStrong()
+    {
+        StartCoroutine(ZoomCamInSpellCast());
+        StartCoroutine(AttackLightningStrong());   
+    }
+
+    IEnumerator AttackLightningStrong()
+    {
+        Vector3 origCamPos = new Vector3(7.5f - 0.68f, 1.07f, -6.23f);
+        Vector3 origIceTrail = new Vector3(7.5f - 4.57f, 3.54f, 0);
+        camIceSpellCamTwo.transform.position = origCamPos;
+        iceTrailLead.transform.position = origIceTrail;
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Attack Trigger Set");
+        animator.SetTrigger("EnemyAttack");
+        yield return new WaitForSeconds(1.5f);
+        camIceSpellCamTwo.Priority = 20;
+        camFrogZoom.Priority = 10;
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(DestroyMagicCircle());
+        AttackOBJInstance = Instantiate(thunderStormPrefab, enemy.transform.position + Vector3.up * 12f, Quaternion.identity);
+        ParticleSystem[] ParticleSystems = AttackOBJInstance.GetComponentsInChildren<ParticleSystem>();
+        ParticleSystems[0].Play();
+        //yield return new WaitForSeconds(1f);
+        Light light = AttackOBJInstance.GetComponentInChildren<Light>();
+        light.enabled = false;
+        yield return new WaitForSeconds(0.4f);
+        //light.enabled = true;
+        yield return new WaitForSeconds(0.1f);
+        //light.enabled = false;
+        yield return new WaitForSeconds(0.2f);
+        //light.enabled = true;
+        yield return new WaitForSeconds(0.1f);
+        //light.enabled = false;
+        yield return new WaitForSeconds(0.2f);
+        ParticleSystems[1].Play();
+        yield return new WaitForSeconds(0.5f);
+        GameObject bigAhhBolt = Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt = bigAhhBolt.GetComponent<LightningBoltController>();
+        bolt.CreateBolt(AttackOBJInstance.transform.position - Vector3.up * 3.5f, new Vector3(enemy.transform.position.x, -0.5f, enemy.transform.position.z), 1f);
+        GameObject bigAhhBolt2 = Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt2 = bigAhhBolt2.GetComponent<LightningBoltController>();
+        bolt2.CreateBolt(AttackOBJInstance.transform.position - Vector3.up * 3.5f + Vector3.right * 0.75f, new Vector3(enemy.transform.position.x + 0.75f, -0.5f, enemy.transform.position.z), 0.125f);
+        GameObject bigAhhBolt3 = Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt3 = bigAhhBolt3.GetComponent<LightningBoltController>();
+        bolt3.CreateBolt(AttackOBJInstance.transform.position - Vector3.up * 3.5f - Vector3.right * 0.75f, new Vector3(enemy.transform.position.x - 0.75f, -0.5f, enemy.transform.position.z), 0.125f);
+        GameObject bigAhhBolt4 = Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt4 = bigAhhBolt4.GetComponent<LightningBoltController>();
+        bolt4.CreateBolt(AttackOBJInstance.transform.position - Vector3.up * 3.5f + Vector3.forward * 0.75f, new Vector3(enemy.transform.position.x, -0.5f, enemy.transform.position.z + 0.75f), 0.125f);
+        GameObject bigAhhBolt5 = Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt5 = bigAhhBolt5.GetComponent<LightningBoltController>();
+        bolt5.CreateBolt(AttackOBJInstance.transform.position - Vector3.up * 3.5f - Vector3.forward * 0.75f, new Vector3(enemy.transform.position.x, -0.5f, enemy.transform.position.z - 0.75f), 0.125f);
+        
+        /*int i = (int)Random.Range(4, 8);
+        List<GameObject> smallbolts = new List<GameObject>();
+        for (int j = 0; j < i; j++)
+        {
+            smallbolts.Add(Instantiate(Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity)));
+            LightningBoltController tempBolt = smallbolts[j].GetComponent<LightningBoltController>();
+            float yOffset = Random.Range(2, 4);
+            float xOffset = Random.Range(1, 2);
+            float angle = 360f / i * j + Random.Range(15f, -15f);
+            float zOffset = xOffset * Mathf.Sin(angle);
+            xOffset = xOffset * Mathf.Cos(angle);
+            Vector3 boltEndPos = AttackOBJInstance.transform.position - Vector3.up * 4.75f + new Vector3(xOffset, -yOffset, zOffset);
+            tempBolt.CreateBolt(AttackOBJInstance.transform.position -Vector3.up * 4.75f, boltEndPos, Random.Range(0.05f, 0.2f));
+        }*/
+        Vector3 camEndPos = new Vector3(7.5f - 5.09f, 0.163f, -1.32f);
+        Vector3 iceTrailEnd = enemy.transform.position + Vector3.up * 1.25f;
+        yield return new WaitForSeconds(0.25f);
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDTrigger");
+        float t = 0f;
+        while (t < 0.5f)
+        {
+            float NormT = t / 0.5f;
+            iceTrailLead.transform.position = Vector3.Lerp(origIceTrail, iceTrailEnd, NormT);
+            camIceSpellCamTwo.transform.position = Vector3.Lerp(origCamPos, camEndPos, NormT);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        iceTrailLead.transform.position = iceTrailEnd;
+        camIceSpellCamTwo.transform.position = camEndPos;
+        yield return new WaitForSeconds(2.5f);
+        bolt.DestroyBolt();
+        bolt2.DestroyBolt();
+        bolt3.DestroyBolt();
+        bolt4.DestroyBolt();
+        bolt5.DestroyBolt();
+        yield return new WaitForSeconds(0.1f);
+        Destroy(bigAhhBolt);
+        Destroy(bigAhhBolt2);
+        Destroy(bigAhhBolt3);
+        Destroy(bigAhhBolt4);
+        Destroy(bigAhhBolt5);
+        ParticleSystems[0].Stop();
+        ParticleSystems[1].Stop();
+        camGameplay.Priority = 20;
+        camIceSpellCamTwo.Priority = 10;
+        enemy.GetComponent<Animator>().ResetTrigger("AttackEDTrigger");
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDToIdle");
+        yield return new WaitForSeconds(0.25f);
+        Destroy(AttackOBJInstance);
+        camFrogZoom.transform.rotation = startRot;
+        yield return new WaitForSeconds(0.5f);
+        
+    }
+
+    public void PerformAttackLightningWeak()
+    {
+        StartCoroutine(ZoomCamInSpellCast());
+        StartCoroutine(AttackLightningWeak());
+    }
+
+    IEnumerator AttackLightningWeak()
+    {
+        camIceSpellCamTwo.transform.position = new Vector3(3.75f, 1.2f, -5f);
+        iceTrailLead.transform.position = /*gameObject.transform.position +*/ new Vector3(3.75f, 1.2f, 0f);
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Attack Trigger Set");
+        animator.SetTrigger("EnemyAttack");
+        yield return new WaitForSeconds(1.5f);
+        camIceSpellCamTwo.Priority = 20;
+        camFrogZoom.Priority = 10;
+        yield return new WaitForSeconds(0.5f);
+        AttackOBJInstance = Instantiate(lightningboltPrefab, magicCircleInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt = AttackOBJInstance.GetComponent<LightningBoltController>();
+        bolt.CreateBolt(magicCircleInstance.transform.position, new Vector3(enemy.transform.position.x, 0.9f, enemy.transform.position.z));
+        yield return new WaitForSeconds(0.06f);
+        GameObject AttackOBJInstance2 = Instantiate(lightningboltPrefab, magicCircleInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt2 = AttackOBJInstance2.GetComponent<LightningBoltController>();
+        bolt2.CreateBolt(magicCircleInstance.transform.position, new Vector3(enemy.transform.position.x, 0.9f, enemy.transform.position.z));
+        yield return new WaitForSeconds(0.06f);
+        GameObject AttackOBJInstance3 = Instantiate(lightningboltPrefab, magicCircleInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt3 = AttackOBJInstance3.GetComponent<LightningBoltController>();
+        bolt3.CreateBolt(magicCircleInstance.transform.position, new Vector3(enemy.transform.position.x, 0.9f, enemy.transform.position.z));
+        yield return new WaitForSeconds(0.15f);
+        Transform[] children = enemy.GetComponentsInChildren<Transform>();
+        Dictionary<Renderer, Material> originalMats = new Dictionary<Renderer, Material>();
+        for (int i = 0; i < children.Length; i++)
+        {
+            Renderer rend = children[i].GetComponent<Renderer>();
+            if (rend != null)
+            {
+                if (!originalMats.ContainsKey(rend))
+                {
+                    originalMats[rend] = rend.sharedMaterial;
+                }
+                Material mat = rend.material;
+                if (mat != null)
+                {
+                    mat.EnableKeyword("_EMISSION");
+                    mat.SetColor("_EmissionColor", Color.yellow * 10);
+                }
+            }
+        }
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDTrigger");
+        bolt.CreateSparkVFX(new Vector3(enemy.transform.position.x, 0.9f, enemy.transform.position.z));
+        yield return new WaitForSeconds(2.5f);
+        StartCoroutine(DestroyMagicCircle());
+        yield return new WaitForSeconds(0.125f);
+        bolt.DestroyBolt();
+        bolt2.DestroyBolt();
+        bolt3.DestroyBolt();
+        for (int i = 0; i < children.Length; i++)
+        {
+            Renderer rend = children[i].GetComponent<Renderer>();
+            if (rend != null)
+            {
+                rend.material = originalMats[rend];
+            }
+        }
+        Debug.Log("ResetColor");
+        enemy.GetComponent<Animator>().ResetTrigger("AttackEDTrigger");
+        enemy.GetComponent<Animator>().SetTrigger("AttackEDToIdle");
+        StartCoroutine(DestroyMagicCircle());
+        yield return new WaitForSeconds(0.05f);
+        Destroy(AttackOBJInstance);
+        Destroy(AttackOBJInstance2);
+        Destroy(AttackOBJInstance3);
+        camIceSpellCamTwo.Priority = 10;
+        camFrogZoom.transform.rotation = startRot;
+        camGameplay.Priority = 20;
+        yield return new WaitForSeconds(1f);
+
+    }
+
 
     public void PerformAttackFire()
     {

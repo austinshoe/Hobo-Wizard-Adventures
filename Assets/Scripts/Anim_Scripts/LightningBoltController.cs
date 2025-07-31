@@ -34,6 +34,59 @@ public class LightningBoltController : MonoBehaviour
 
     }
 
+    public void CreateBolt(Vector3 startPos, Vector3 endPos, float size)
+    {
+        StartCoroutine(SpawnBolt(startPos, endPos, size));
+        /*LineRenderer bolt = new LineRenderer();
+        bolt.widthMultiplier = 0.1f;
+        bolt.useWorldSpace = true;
+
+        int segments = (int)Random.Range(Vector3.Distance(startPos, endPos) / 2, Vector3.Distance(startPos, endPos) / 0.8f);
+        bolt.positionCount = segments + 1;
+
+        bolt.SetPosition(0, startPos);
+        bolt.SetPosition(segments, endPos);
+        Vector3 dist = endPos - startPos;
+        for (int i = 1; i < segments; i++)
+        {
+            Vector3 eqPos = startPos + dist / segments * i;
+            Vector3 offset = new Vector3(Random.Range(-0.66f, 0.66f), Random.Range(-0.66f, 0.66f), Random.Range(-0.66f, 0.66f));
+            bolt.SetPosition(i, eqPos + offset);
+
+        }*/
+    }
+
+    IEnumerator SpawnBolt(Vector3 startPos, Vector3 endPos, float size)
+    {
+        LineRenderer bolt = gameObject.AddComponent<LineRenderer>();
+        bolt.material = mat;
+        bolt.widthMultiplier = size;
+        bolt.useWorldSpace = true;
+        int segments = (int)Random.Range(Vector3.Distance(startPos, endPos) / 2, Vector3.Distance(startPos, endPos) / 0.8f);
+        //bolt.positionCount = segments + 1;
+        bolt.positionCount = 1;
+        bolt.SetPosition(0, startPos);
+        yield return new WaitForSeconds(0.05f);
+        Vector3 dist = endPos - startPos;
+        for (int i = 1; i < segments; i++)
+        {
+            Vector3 eqPos = startPos + dist / segments * i;
+            //Vector3 offset = new Vector3(Random.Range(-0.66f, 0.66f), Random.Range(-0.66f, 0.66f), Random.Range(-0.66f, 0.66f));
+            Vector3 offset = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+            offset = offset.normalized * 0.5f;
+            bolt.positionCount++;
+            bolt.SetPosition(i, eqPos + offset);
+            yield return new WaitForSeconds(0.05f);
+        }
+        bolt.positionCount++;
+        bolt.SetPosition(segments, endPos);
+        //doneSpawning.Add(true);
+        Bolt = bolt;
+        stopUpdate = false;
+        StartCoroutine(BeginBoltUpdate(bolt));
+
+    }
+
     public void CreateBolt(Vector3 startPos, Vector3 endPos)
     {
         StartCoroutine(SpawnBolt(startPos, endPos));

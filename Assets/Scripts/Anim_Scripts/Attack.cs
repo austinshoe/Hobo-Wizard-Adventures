@@ -9,10 +9,12 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 using Random = UnityEngine.Random;
 
 public class Attack : MonoBehaviour, GenericAttack
 {
+    public GameObject thunderStormPrefab;
     public GameObject lightningboltPrefab;
     public GameObject sparkExplosionPrefab;
     public GameObject fireStormPrefab;
@@ -84,6 +86,11 @@ public class Attack : MonoBehaviour, GenericAttack
             SetMove(Move.Type.Lightning, Move.Effect.Weak);
             PerformAttack();
         }
+        else if (Input.GetKeyDown(KeyCode.G))
+        {
+            SetMove(Move.Type.Lightning, Move.Effect.Strong);
+            PerformAttack();
+        }
     }
     public void PerformAttack()
     {
@@ -113,7 +120,7 @@ public class Attack : MonoBehaviour, GenericAttack
                 PerformAttackLightningWeak();
                 break;
             case Move.Effect.Strong:
-                //PerformAttackFireStrong();
+                PerformAttackLightningStrong();
                 break;
             case Move.Effect.Status:
                 // Implement status ice attack logic here
@@ -130,13 +137,120 @@ public class Attack : MonoBehaviour, GenericAttack
         }
     }
 
-    public void PerformAttackLightningWeak()
+    public void PerformAttackLightningStrong()
     {
         StartCoroutine(ZoomCamInSpellCast());
-        StartCoroutine(AttackLightningStrong());
+        StartCoroutine(AttackLightningStrong());   
     }
 
     IEnumerator AttackLightningStrong()
+    {
+        Vector3 origCamPos = new Vector3(0.68f, 1.07f, -6.23f);
+        Vector3 origIceTrail = new Vector3(4.57f, 3.54f, 0);
+        camIceSpellCamTwo.transform.position = origCamPos;
+        iceTrailLead.transform.position = origIceTrail;
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Attack Trigger Set");
+        animator.SetTrigger("AttackTrigger");
+        yield return new WaitForSeconds(1.5f);
+        camIceSpellCamTwo.Priority = 20;
+        camFrogZoom.Priority = 10;
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(DestroyMagicCircle());
+        AttackOBJInstance = Instantiate(thunderStormPrefab, enemy.transform.position + Vector3.up * 12f, Quaternion.identity);
+        ParticleSystem[] ParticleSystems = AttackOBJInstance.GetComponentsInChildren<ParticleSystem>();
+        ParticleSystems[0].Play();
+        //yield return new WaitForSeconds(1f);
+        Light light = AttackOBJInstance.GetComponentInChildren<Light>();
+        light.enabled = false;
+        yield return new WaitForSeconds(0.4f);
+        //light.enabled = true;
+        yield return new WaitForSeconds(0.1f);
+        //light.enabled = false;
+        yield return new WaitForSeconds(0.2f);
+        //light.enabled = true;
+        yield return new WaitForSeconds(0.1f);
+        //light.enabled = false;
+        yield return new WaitForSeconds(0.2f);
+        ParticleSystems[1].Play();
+        yield return new WaitForSeconds(0.5f);
+        GameObject bigAhhBolt = Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt = bigAhhBolt.GetComponent<LightningBoltController>();
+        bolt.CreateBolt(AttackOBJInstance.transform.position - Vector3.up * 3.5f, new Vector3(enemy.transform.position.x, -0.5f, enemy.transform.position.z), 1f);
+        GameObject bigAhhBolt2 = Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt2 = bigAhhBolt2.GetComponent<LightningBoltController>();
+        bolt2.CreateBolt(AttackOBJInstance.transform.position - Vector3.up * 3.5f + Vector3.right * 0.75f, new Vector3(enemy.transform.position.x + 0.75f, -0.5f, enemy.transform.position.z), 0.125f);
+        GameObject bigAhhBolt3 = Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt3 = bigAhhBolt3.GetComponent<LightningBoltController>();
+        bolt3.CreateBolt(AttackOBJInstance.transform.position - Vector3.up * 3.5f - Vector3.right * 0.75f, new Vector3(enemy.transform.position.x - 0.75f, -0.5f, enemy.transform.position.z), 0.125f);
+        GameObject bigAhhBolt4 = Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt4 = bigAhhBolt4.GetComponent<LightningBoltController>();
+        bolt4.CreateBolt(AttackOBJInstance.transform.position - Vector3.up * 3.5f + Vector3.forward * 0.75f, new Vector3(enemy.transform.position.x, -0.5f, enemy.transform.position.z + 0.75f), 0.125f);
+        GameObject bigAhhBolt5 = Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity);
+        LightningBoltController bolt5 = bigAhhBolt5.GetComponent<LightningBoltController>();
+        bolt5.CreateBolt(AttackOBJInstance.transform.position - Vector3.up * 3.5f - Vector3.forward * 0.75f, new Vector3(enemy.transform.position.x, -0.5f, enemy.transform.position.z - 0.75f), 0.125f);
+        
+        /*int i = (int)Random.Range(4, 8);
+        List<GameObject> smallbolts = new List<GameObject>();
+        for (int j = 0; j < i; j++)
+        {
+            smallbolts.Add(Instantiate(Instantiate(lightningboltPrefab, AttackOBJInstance.transform.position, Quaternion.identity)));
+            LightningBoltController tempBolt = smallbolts[j].GetComponent<LightningBoltController>();
+            float yOffset = Random.Range(2, 4);
+            float xOffset = Random.Range(1, 2);
+            float angle = 360f / i * j + Random.Range(15f, -15f);
+            float zOffset = xOffset * Mathf.Sin(angle);
+            xOffset = xOffset * Mathf.Cos(angle);
+            Vector3 boltEndPos = AttackOBJInstance.transform.position - Vector3.up * 4.75f + new Vector3(xOffset, -yOffset, zOffset);
+            tempBolt.CreateBolt(AttackOBJInstance.transform.position -Vector3.up * 4.75f, boltEndPos, Random.Range(0.05f, 0.2f));
+        }*/
+        Vector3 camEndPos = new Vector3(5.09f, 0.163f, -1.32f);
+        Vector3 iceTrailEnd = enemy.transform.position + Vector3.up * 1.25f;
+        yield return new WaitForSeconds(0.25f);
+        enemy.GetComponent<Animator>().SetTrigger("EnemyAttacked");
+        float t = 0f;
+        while (t < 0.5f)
+        {
+            float NormT = t / 0.5f;
+            iceTrailLead.transform.position = Vector3.Lerp(origIceTrail, iceTrailEnd, NormT);
+            camIceSpellCamTwo.transform.position = Vector3.Lerp(origCamPos, camEndPos, NormT);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        iceTrailLead.transform.position = iceTrailEnd;
+        camIceSpellCamTwo.transform.position = camEndPos;
+        yield return new WaitForSeconds(2.5f);
+        bolt.DestroyBolt();
+        bolt2.DestroyBolt();
+        bolt3.DestroyBolt();
+        bolt4.DestroyBolt();
+        bolt5.DestroyBolt();
+        yield return new WaitForSeconds(0.1f);
+        Destroy(bigAhhBolt);
+        Destroy(bigAhhBolt2);
+        Destroy(bigAhhBolt3);
+        Destroy(bigAhhBolt4);
+        Destroy(bigAhhBolt5);
+        ParticleSystems[0].Stop();
+        ParticleSystems[1].Stop();
+        camGameplay.Priority = 20;
+        camIceSpellCamTwo.Priority = 10;
+        enemy.GetComponent<Animator>().ResetTrigger("EnemyAttacked");
+        enemy.GetComponent<Animator>().SetTrigger("EnemyAttackedToIdle");
+        yield return new WaitForSeconds(0.25f);
+        Destroy(AttackOBJInstance);
+        camFrogZoom.transform.rotation = startRot;
+        yield return new WaitForSeconds(0.5f);
+        
+    }
+
+    public void PerformAttackLightningWeak()
+    {
+        StartCoroutine(ZoomCamInSpellCast());
+        StartCoroutine(AttackLightningWeak());
+    }
+
+    IEnumerator AttackLightningWeak()
     {
         camIceSpellCamTwo.transform.position = new Vector3(3.75f, 1.2f, -5f);
         iceTrailLead.transform.position = gameObject.transform.position + new Vector3(3.75f, 1.2f, 0f);
