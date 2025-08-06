@@ -86,11 +86,16 @@ public class Magic_Circle : MonoBehaviour
         ShardEff.GetComponent<ParticleSystem>().Play();
         StartCoroutine(DieInAHoleBrochacho(ShardEff));
     }
-    
+
     IEnumerator DieInAHoleBrochacho(GameObject ShardEff)
     {
         yield return new WaitForSeconds(0.125f);
-        Destroy(ShardEff);
+        //Destroy(ShardEff);
+        //Destroy(gameObject);
+        foreach (GameObject obj in rings) {
+            obj.GetComponent<Renderer>().enabled = false;
+        } 
+        yield return new WaitForSeconds(1.375f);Destroy(ShardEff);
         Destroy(gameObject);
     }
 }

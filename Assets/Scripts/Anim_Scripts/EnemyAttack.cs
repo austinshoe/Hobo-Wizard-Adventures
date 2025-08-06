@@ -642,12 +642,13 @@ public void PerformAttackFireStrong()
         enemy.GetComponent<Animator>().SetTrigger("AttackEDToIdle");
         yield return new WaitForSeconds(0.875f);
         Destroy(fireColumnInstance);
-        Destroy(floorCircle);
         camFrogZoom.transform.rotation = startRot;
 
         camGameplay.Priority = 20;
         camIceSpellCamTwo.Priority = 10;
         camFrogZoom.Priority = 10;
+        yield return new WaitForSeconds(0.75f);
+        Destroy(floorCircle);
 
         /*
         CinemachineImpulseSource ShakeEffDriver = gameObject.AddComponent<CinemachineImpulseSource>();
