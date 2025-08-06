@@ -92,6 +92,7 @@ public class Magic_Circle : MonoBehaviour
         yield return new WaitForSeconds(0.125f);
         //Destroy(ShardEff);
         //Destroy(gameObject);
+        
         foreach (GameObject obj in rings) {
             obj.GetComponent<Renderer>().enabled = false;
         } 
