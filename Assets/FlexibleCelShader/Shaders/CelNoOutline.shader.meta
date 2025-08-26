@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 9e0b78a84584ffb4b9d963b4c6f26436
+timeCreated: 1517543204
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/Shaders/CelNoOutline.shader
+  uploadId: 402874

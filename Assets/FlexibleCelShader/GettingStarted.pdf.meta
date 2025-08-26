@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 34bfb3066a215e14093bf56b2f30d766
+timeCreated: 1520491351
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/GettingStarted.pdf
+  uploadId: 402874

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 35ee8dd17bb184a72a4eede329373443
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 325417
+  packageName: Painterly Normals Shader
+  packageVersion: 1.0
+  assetPath: Assets/PainterlyAsset/Demo/Materials/DemoObjects/DemoMetalic.mat
+  uploadId: 772960

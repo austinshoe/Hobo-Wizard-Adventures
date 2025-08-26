@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4b13f2aee51ae6842bbfbf51af8db142
+timeCreated: 1519288130
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/Presets/Glacier.json
+  uploadId: 402874

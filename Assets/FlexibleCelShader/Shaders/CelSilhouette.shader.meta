@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 1fe8cefbb0066914f8f323f408d6b201
+timeCreated: 1517543204
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/Shaders/CelSilhouette.shader
+  uploadId: 402874

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c376d4d5d58a7b541b36bf24ec59086a
+timeCreated: 1519451412
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/Presets/Subtle Breeze.json
+  uploadId: 402874

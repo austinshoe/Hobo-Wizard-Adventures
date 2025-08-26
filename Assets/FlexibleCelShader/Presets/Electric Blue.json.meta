@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a2275e2887bfb4c4bb1bf20eaa248f16
+timeCreated: 1519286694
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/Presets/Electric Blue.json
+  uploadId: 402874

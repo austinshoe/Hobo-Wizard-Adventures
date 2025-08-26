@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 03cea75956fea834698cd855e1931aa0
+timeCreated: 1520185744
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/Example/ExplMat1.mat
+  uploadId: 402874

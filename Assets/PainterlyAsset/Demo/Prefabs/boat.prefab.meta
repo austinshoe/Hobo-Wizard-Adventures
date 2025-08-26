@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 76f01c69895fd406fb4a030c1a71d523
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 325417
+  packageName: Painterly Normals Shader
+  packageVersion: 1.0
+  assetPath: Assets/PainterlyAsset/Demo/Prefabs/boat.prefab
+  uploadId: 772960

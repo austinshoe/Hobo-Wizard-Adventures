@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7b629743bb8212640a695592c81a7768
+timeCreated: 1519288130
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/Presets/Solid Gold.json
+  uploadId: 402874

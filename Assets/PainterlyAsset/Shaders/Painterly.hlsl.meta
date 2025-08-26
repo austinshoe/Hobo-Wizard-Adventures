@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6ce3babaf0f4745e48960db7a002c54f
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 325417
+  packageName: Painterly Normals Shader
+  packageVersion: 1.0
+  assetPath: Assets/PainterlyAsset/Shaders/Painterly.hlsl
+  uploadId: 772960

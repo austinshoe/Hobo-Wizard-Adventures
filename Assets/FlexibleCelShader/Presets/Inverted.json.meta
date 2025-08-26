@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 156079885c830d24eb40059cd50be94a
+timeCreated: 1519288130
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/Presets/Inverted.json
+  uploadId: 402874

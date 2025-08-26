@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8b97b778e4abb489b80aa169d6ff302a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 325417
+  packageName: Painterly Normals Shader
+  packageVersion: 1.0
+  assetPath: Assets/PainterlyAsset/Demo/Materials/DemoObjects/DemoSmooth.mat
+  uploadId: 772960

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 777659dbaf8ed4c02a71b08af8f007a5
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 325417
+  packageName: Painterly Normals Shader
+  packageVersion: 1.0
+  assetPath: Assets/PainterlyAsset/Demo/Scenes/PainterlyDemo.unity
+  uploadId: 772960

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7e7c9414dca4bec4a9560a76dd979fac
+timeCreated: 1519288130
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/Presets/Earthy Light.json
+  uploadId: 402874

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 88f03b44328a84999bc4cb5d3c221ec1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 325417
+  packageName: Painterly Normals Shader
+  packageVersion: 1.0
+  assetPath: Assets/PainterlyAsset/Demo/Prefabs/teapot.prefab
+  uploadId: 772960

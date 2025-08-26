@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 604f3129ccc5a0b4cb53b06712bb9484
+timeCreated: 1520185643
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112979
+  packageName: Flexible Cel Shader - Built in Pipeline
+  packageVersion: 1.0
+  assetPath: Assets/FlexibleCelShader/Example/Example Scene.unity
+  uploadId: 402874

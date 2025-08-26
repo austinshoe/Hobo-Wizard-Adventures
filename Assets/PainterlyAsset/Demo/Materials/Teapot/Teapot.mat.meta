@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 13c1faa7020e54d49b64b85ba6deda10
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 325417
+  packageName: Painterly Normals Shader
+  packageVersion: 1.0
+  assetPath: Assets/PainterlyAsset/Demo/Materials/Teapot/Teapot.mat
+  uploadId: 772960
