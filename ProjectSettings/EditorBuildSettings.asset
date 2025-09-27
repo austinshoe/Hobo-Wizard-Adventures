@@ -6,8 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/CFA/Player Customization.unity
+    guid: 9f029169b29d04b82a395d418fe3bd0a
+  - enabled: 1
     path: Assets/Scenes/Unused/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/CFA/Crafting Scene.unity
+    guid: 9261139e9878d4bb1904e66381f0e688
+  - enabled: 1
+    path: Assets/Scenes/CFA/Chibi Frog Adventures.unity
+    guid: 4b52c40a03e9c48bf9a52c3f2f5d4722
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5186881512423498647}
   - component: {fileID: 5222509820012185852}
   - component: {fileID: 8843569995430244181}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Purple_Quartz
   m_TagString: Untagged
   m_Icon: {fileID: 0}

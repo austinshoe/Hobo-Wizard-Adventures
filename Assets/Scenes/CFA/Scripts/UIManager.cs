@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -10,10 +12,13 @@ public class UIManager : MonoBehaviour
     public GameObject StaffMenu;
     public GameObject HeadwearMenu;
     public GameObject RobeMenu;
+    public GameObject CustomizingModel;
     GameObject CurrentMenu;
 
     public GameObject StaffScrollViewContent;
     public GameObject StaffButtonPrefab;
+    public Sprite CONST_TRANSPARENT;
+    public Sprite CONST_CREATE;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -35,6 +40,7 @@ public class UIManager : MonoBehaviour
                 break;
             case GameflowManager.MenuState.Staff:
                 CurrentMenu = StaffMenu;
+                SetUpStaffScreen();
                 break;
             case GameflowManager.MenuState.Headwear:
                 CurrentMenu = HeadwearMenu;
@@ -120,7 +126,41 @@ public class UIManager : MonoBehaviour
     {
         foreach (Transform child in StaffScrollViewContent.transform)
         {
-            GameObject.Destroy(child.gameObject);
+            Destroy(child.gameObject);
         }
+        foreach (Staff staff in InventoryManager.instance.craftedStaffs)
+        {
+            GameObject staffButton = Instantiate(StaffButtonPrefab, StaffScrollViewContent.transform);
+            GameObject buttonPanel = staffButton.transform.Find("IconPanel").gameObject;
+            //buttonPanel.GetComponent<Image>().sprite = staff.icon;
+            buttonPanel.GetComponent<Image>().sprite = Sprite.Create(
+                staff.icon,
+                new Rect(0, 0, staff.icon.width, staff.icon.height),
+                new Vector2(0.5f, 0.5f)
+            );
+            staffButton.GetComponent<Button>().onClick.AddListener(() => SelectStaff(staff));
+        }
+        GameObject createButton = Instantiate(StaffButtonPrefab, StaffScrollViewContent.transform);
+        GameObject createButtonPanel = createButton.transform.Find("IconPanel").gameObject;
+        createButtonPanel.GetComponent<Image>().sprite = CONST_CREATE;
+        createButton.GetComponent<Button>().onClick.AddListener(() => CreateStaff());
+    }
+
+    public void CreateStaff()
+    {
+        InventoryManager.instance.currentStaff = null;
+        SceneManager.LoadScene("Crafting Scene");
+    }
+
+    public void SelectStaff(Staff staff)
+    {
+        InventoryManager.instance.currentStaff = staff;
+        CustomizingModel.GetComponent<CustomationManager>().UpdateModel();
+    }
+
+    public void PlayGame()
+    {
+        GameflowManager.instance.currentState = GameflowManager.MenuState.Playing;
+        SceneManager.LoadScene("Chibi Frog Adventures");
     }
 }

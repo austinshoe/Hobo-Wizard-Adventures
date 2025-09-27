@@ -11,6 +11,7 @@ public class GameflowManager : MonoBehaviour
         Headwear,
         Robe,
         Crafting,
+        Playing,
         None
     }
 

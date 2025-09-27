@@ -27,11 +27,13 @@ public class Staff
     public StaffPart baubleMaterial2;
     public StaffPart hiltBaubleMaterial;
     public StaffPart hiltBaubleMaterial2;
+    public StaffPart hilt;
     //public RawImage icon;
-    Sprite icon;
+    //public Sprite icon;
+    public Texture2D icon;
     public Staff(StaffPart baseMat, StaffPart headMat,
                  StaffPart baubleMat1, StaffPart baubleMat2,
-                 StaffPart hiltBaubleMat1, StaffPart hiltBaubleMat2)
+                 StaffPart hiltBaubleMat1, StaffPart hiltBaubleMat2, StaffPart hilt)
     {
         baseMaterial = baseMat;
         headMaterial = headMat;
@@ -39,6 +41,7 @@ public class Staff
         baubleMaterial2 = baubleMat2;
         hiltBaubleMaterial = hiltBaubleMat1;
         hiltBaubleMaterial2 = hiltBaubleMat2;
+        this.hilt = hilt;
         icon = null;
     }
 
@@ -47,7 +50,12 @@ public class Staff
         icon = newIcon;
     }*/
 
-    public void AssignIcon(Sprite newIcon)
+    /*public void AssignIcon(Sprite newIcon)
+    {
+        icon = newIcon;
+    }*/
+
+    public void AssignIcon(Texture2D newIcon)
     {
         icon = newIcon;
     }

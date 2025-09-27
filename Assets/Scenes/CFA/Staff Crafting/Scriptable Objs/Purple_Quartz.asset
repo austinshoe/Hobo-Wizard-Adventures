@@ -15,3 +15,4 @@ MonoBehaviour:
   partName: Purple_Quartz
   partType: 1
   prefab: {fileID: 8684369998560028454, guid: 1321ae7f7482f489a97f1e382504d9e8, type: 3}
+  icon: {fileID: 21300000, guid: 73688f24a5159405ea8ccb5b650c7b26, type: 3}

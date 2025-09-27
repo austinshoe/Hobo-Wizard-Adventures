@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf643f1f0e0f34a5a998ee1669259231, type: 3}
+  m_Name: Golden_Bubble
+  m_EditorClassIdentifier: 
+  partName: Golden_Bubble
+  partType: 2
+  prefab: {fileID: 3203736668352677337, guid: 4a4edea3ea391440e9c368b3c5994161, type: 3}
+  icon: {fileID: 21300000, guid: 642941e59495c4ddbbe3907ef3c32b66, type: 3}

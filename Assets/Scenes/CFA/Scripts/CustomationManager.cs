@@ -2,11 +2,15 @@ using UnityEngine;
 
 public class CustomationManager : MonoBehaviour
 {
-    public static CustomationManager instance;
+    //public static CustomationManager instance;
     public GameObject playerModel;
     public GameObject BaseSocket;
     public GameObject HeadSocket;
     public GameObject HiltSocket;
+    public GameObject Bauble1Socket;
+    public GameObject Bauble2Socket;
+    public GameObject HiltBaubleSocket;
+    public GameObject HiltBauble2Socket;
     public GameObject currentBase;
     public GameObject currentHead;
     public GameObject currentHilt;
@@ -15,7 +19,7 @@ public class CustomationManager : MonoBehaviour
     public GameObject currentHiltBauble1;
     public GameObject currentHiltBauble2;
 
-    void Awake()
+    /*void Awake()
     {
         if (instance == null)
         {
@@ -26,10 +30,15 @@ public class CustomationManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
+    }*/
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (GameflowManager.instance.currentState == GameflowManager.MenuState.Playing)
+        {
+            UpdateModel();
+            return;
+        }
         /*currentHead = null;
         currentBase = null;
         currentHilt = null;
@@ -46,6 +55,11 @@ public class CustomationManager : MonoBehaviour
     }
     public void UpdateModel()
     {
+        if (InventoryManager.instance.currentStaff == null)
+        {
+            return;
+        }
+
         if (currentBase != null)
         {
             Destroy(currentBase);
@@ -70,7 +84,7 @@ public class CustomationManager : MonoBehaviour
         }
         if (InventoryManager.instance.currentStaff.baubleMaterial1 != null)
         {
-            currentBauble1 = Instantiate(InventoryManager.instance.currentStaff.baubleMaterial1.prefab, HeadSocket.transform);
+            currentBauble1 = Instantiate(InventoryManager.instance.currentStaff.baubleMaterial1.prefab, Bauble1Socket.transform);
         }
 
         if (currentBauble2 != null)
@@ -79,7 +93,7 @@ public class CustomationManager : MonoBehaviour
         }
         if (InventoryManager.instance.currentStaff.baubleMaterial2 != null)
         {
-            currentBauble2 = Instantiate(InventoryManager.instance.currentStaff.baubleMaterial2.prefab, HeadSocket.transform);
+            currentBauble2 = Instantiate(InventoryManager.instance.currentStaff.baubleMaterial2.prefab, Bauble2Socket.transform);
         }
 
         if (currentHiltBauble1 != null)
@@ -88,7 +102,7 @@ public class CustomationManager : MonoBehaviour
         }
         if (InventoryManager.instance.currentStaff.hiltBaubleMaterial != null)
         {
-            currentHiltBauble1 = Instantiate(InventoryManager.instance.currentStaff.hiltBaubleMaterial.prefab, HiltSocket.transform);
+            currentHiltBauble1 = Instantiate(InventoryManager.instance.currentStaff.hiltBaubleMaterial.prefab, HiltBaubleSocket.transform);
         }
 
         if (currentHiltBauble2 != null)
@@ -97,7 +111,15 @@ public class CustomationManager : MonoBehaviour
         }
         if (InventoryManager.instance.currentStaff.hiltBaubleMaterial2 != null)
         {
-            currentHiltBauble2 = Instantiate(InventoryManager.instance.currentStaff.hiltBaubleMaterial2.prefab, HiltSocket.transform);
+            currentHiltBauble2 = Instantiate(InventoryManager.instance.currentStaff.hiltBaubleMaterial2.prefab, HiltBauble2Socket.transform);
+        }
+        if (currentHilt != null)
+        {
+            Destroy(currentHilt);
+        }
+        if (InventoryManager.instance.currentStaff.hilt != null)
+        {
+            currentHilt = Instantiate(InventoryManager.instance.currentStaff.hilt.prefab, HiltSocket.transform);
         }
     }
 }

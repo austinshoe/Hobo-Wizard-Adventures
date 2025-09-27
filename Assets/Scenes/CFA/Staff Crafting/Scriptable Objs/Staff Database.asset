@@ -15,3 +15,4 @@ MonoBehaviour:
   allParts:
   - {fileID: 11400000, guid: 436ddf91f77364ccb94a063c1cccf9a8, type: 2}
   - {fileID: 11400000, guid: bf4853aa6f687474fae1bf27cc474f99, type: 2}
+  - {fileID: 11400000, guid: ace4471cacc804e29a873a8a19579e27, type: 2}

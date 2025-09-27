@@ -15,3 +15,4 @@ MonoBehaviour:
   partName: Wood_Staff
   partType: 0
   prefab: {fileID: 8756467461848420208, guid: b9023caaa050b4feb9e516aca7afad57, type: 3}
+  icon: {fileID: 21300000, guid: 53267c5baba144473bc162e6fcb77ea6, type: 3}

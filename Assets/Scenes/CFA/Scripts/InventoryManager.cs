@@ -19,7 +19,7 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
     }
 
@@ -30,16 +30,31 @@ public class InventoryManager : MonoBehaviour
         craftedStaffs = new List<Staff>();
         inventory.Add(staffDatabase.GetPartByName("Wood_Staff"));
         inventory.Add(staffDatabase.GetPartByName("Purple_Quartz"));
-        craftedStaffs.Add(new Staff(staffDatabase.GetPartByName("Wood_Staff"),
-                                    staffDatabase.GetPartByName("Purple_Quartz"),
-                                    null, null, null, null));
-        currentStaff = craftedStaffs[0];
-        CustomationManager.instance.UpdateModel();
+        inventory.Add(staffDatabase.GetPartByName("Golden_Bubble"));
+        //craftedStaffs.Add(new Staff(staffDatabase.GetPartByName("Wood_Staff"),
+        //                            staffDatabase.GetPartByName("Purple_Quartz"),
+        //                            null, null, null, null));
+        //currentStaff = craftedStaffs[0];
+        currentStaff = null;
+        //CustomationManager.instance.UpdateModel();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+    
+    public StaffPart[] GetAllPartsOfType(StaffPartType type)
+    {
+        List<StaffPart> partsOfType = new List<StaffPart>();
+        foreach (StaffPart part in inventory)
+        {
+            if (part.partType == type)
+            {
+                partsOfType.Add(part);
+            }
+        }
+        return partsOfType.ToArray();
     }
 }
