@@ -15,6 +15,12 @@ public class SystemInfo
         None
     }
 
+    public enum Mob
+    {
+        Archerfish,
+        None
+    }
+
     public static readonly Dictionary<ElementType, string> ElementTypeToString =
         new Dictionary<ElementType, string>
         {

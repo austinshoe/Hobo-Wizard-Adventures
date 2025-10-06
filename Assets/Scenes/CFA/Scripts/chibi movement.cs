@@ -5,10 +5,15 @@ public class chibimovement : MonoBehaviour
 {
     public GameObject chibi;
     public GameObject camera;
+    public GameObject sceneinfo;
     public float speed;
     public float jumpforce;
+    public float swimSpeed;
+    public float swimUpSpeed;
     public bool isMoving;
     public bool isGrounded = true;
+    public bool canSwimUp = true;
+    public bool inAboveWater = false;
 
     Vector3 facedir;
     void Start()
@@ -20,6 +25,19 @@ public class chibimovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!inAboveWater)
+        {
+            LandMovement();
+        }
+        else
+        {
+            altMovementSwim();
+        }
+
+
+    }
+
+    void LandMovement() {
         isMoving = false;
         Vector3 temp = Vector3.zero;
         if (Input.GetKeyDown(KeyCode.U))
@@ -103,8 +121,6 @@ public class chibimovement : MonoBehaviour
                 }
             }
         }
-
-
     }
 
     void OnCollisionEnter(Collision collision)
@@ -112,6 +128,14 @@ public class chibimovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            if (inAboveWater)
+            {
+                inAboveWater = false;
+                chibi.GetComponent<Animator>().SetBool("ReturnToIdle", true);
+                chibi.GetComponent<Animator>().SetBool("IdleSwim", false);
+                chibi.GetComponent<Animator>().SetBool("Swim", false);
+
+            }
             if (chibi.GetComponent<Animator>().GetBool("Jump"))
             {
                 chibi.GetComponent<Animator>().SetBool("Jump", false);
@@ -119,6 +143,30 @@ public class chibimovement : MonoBehaviour
                 chibi.GetComponent<Animator>().SetBool("Stop", false);
                 chibi.GetComponent<Animator>().SetBool("Run", false);
             }
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Water"))
+        {
+            inAboveWater = true;
+            if (isMoving)
+            {
+                chibi.GetComponent<Animator>().SetBool("IdleSwim", false);
+                chibi.GetComponent<Animator>().SetBool("Swim", true);
+
+            }
+            else
+            {
+                chibi.GetComponent<Animator>().SetBool("IdleSwim", true);
+                chibi.GetComponent<Animator>().SetBool("Swim", false);
+            }
+            chibi.GetComponent<Animator>().SetBool("Jump", false);
+            chibi.GetComponent<Animator>().SetBool("ReturnToIdle", false);
+            chibi.GetComponent<Animator>().SetBool("Stop", false);
+            chibi.GetComponent<Animator>().SetBool("Run", false);
+            canSwimUp = true;
         }
     }
 
@@ -131,5 +179,73 @@ public class chibimovement : MonoBehaviour
         chibi.GetComponent<Animator>().SetBool("Run", false);
         chibi.GetComponent<Animator>().SetBool("ReturnToIdle", true);
         InteractionManager.interaction.LockPlayerControls = false;
+    }
+
+    public void altMovementSwim()
+    {
+        isMoving = false;
+        Vector3 temp = Vector3.zero;
+        if (Input.GetKeyDown(KeyCode.Space) && isUnderwater())
+        {
+            GetComponent<Rigidbody>().linearVelocity = new Vector3(GetComponent<Rigidbody>().linearVelocity.x, 0.0f, GetComponent<Rigidbody>().linearVelocity.z);
+            GetComponent<Rigidbody>().AddForce(Vector3.up * swimUpSpeed, ForceMode.Impulse);
+            canSwimUp = false;
+            StartCoroutine(SwimUpCoolDown());
+
+        }
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        {
+            temp.z += 1.0f;
+            isMoving = true;
+        }
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            temp.z -= 1.0f;
+
+            isMoving = true;
+        }
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            temp.x -= 1.0f;
+            isMoving = true;
+        }
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            temp.x += 1.0f;
+            isMoving = true;
+        }
+        if (isMoving && temp != Vector3.zero)
+        {
+            chibi.transform.rotation = Quaternion.LookRotation(temp);
+            facedir = temp;
+            transform.Translate(temp.normalized * swimSpeed * Time.deltaTime, Space.World);
+            if (!canSwimUp)
+            {
+                chibi.GetComponent<Animator>().SetBool("IdleSwim", true);
+                chibi.GetComponent<Animator>().SetBool("Swim", false);
+            }
+            else
+            {
+                chibi.GetComponent<Animator>().SetBool("IdleSwim", false);
+                chibi.GetComponent<Animator>().SetBool("Swim", true);
+            }
+        }
+        else
+        {
+            chibi.transform.rotation = Quaternion.LookRotation(facedir);
+            chibi.GetComponent<Animator>().SetBool("Swim", false);
+            chibi.GetComponent<Animator>().SetBool("IdleSwim", true);
+        }
+    }
+
+    IEnumerator SwimUpCoolDown() {
+        yield return new WaitForSeconds(0.5f);
+        canSwimUp = true;
+    }
+
+    public bool isUnderwater()
+    {
+        //return chibi.transform.position.y < sceneinfo.GetComponent<SceneInfo>().waterlevel;
+        return transform.position.y < sceneinfo.GetComponent<SceneInfo>().waterlevel;
     }
 }

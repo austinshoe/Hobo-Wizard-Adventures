@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78d0456e261264286a36aa1e693f86ca, type: 3}
+  m_Name: WaterZone
+  m_EditorClassIdentifier: 
+  minX: 5.5
+  maxX: 14.5
+  minY: -1.05
+  maxY: -0.05
+  minZ: -4.5
+  maxZ: 4.5
+  mobPrefab: {fileID: 8434624202480672318, guid: 539bc32d13c164d64af8c5f0d54f4f53, type: 3}
+  maxMobs: 2
+  currentMobs: 0
+  mobs: []
