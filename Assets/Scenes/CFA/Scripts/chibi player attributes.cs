@@ -10,14 +10,27 @@ public class chibiplayerattributes : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        HP = 10;
-        Atk = 5;
-        Def = 5;
-        Mana = 10;
-        Agility = 5;
-        Luck = 1;
-        playerName = "Chibbster";
-        elementType = SystemInfo.ElementType.Ice;
+        if (PlayerManager.instance == null)
+        {
+            HP = 10;
+            Atk = 5;
+            Def = 5;
+            Mana = 10;
+            Agility = 5;
+            Luck = 1;
+            playerName = "Chibbster";
+            elementType = SystemInfo.ElementType.Ice;
+        }
+        else {
+            HP = PlayerManager.instance.HP;
+            Atk = PlayerManager.instance.Atk;
+            Def = PlayerManager.instance.Def;
+            Mana = PlayerManager.instance.Mana;
+            Agility = PlayerManager.instance.Agility;
+            Luck = PlayerManager.instance.Luck;
+            playerName = PlayerManager.instance.playerName;
+            elementType = PlayerManager.instance.elementType;
+        }
     }
 
     // Update is called once per frame

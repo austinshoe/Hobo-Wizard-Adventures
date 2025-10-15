@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isMoving: 0
-  swimSpeed: 0
+  movementSpeed: 25
   sceneInfo: {fileID: 0}
   spawnZone: {fileID: 0}
   anim: {fileID: 0}

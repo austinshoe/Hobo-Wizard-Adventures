@@ -1,4 +1,6 @@
 using System.Collections;
+using NUnit.Framework;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class chibimovement : MonoBehaviour
@@ -14,6 +16,8 @@ public class chibimovement : MonoBehaviour
     public bool isGrounded = true;
     public bool canSwimUp = true;
     public bool inAboveWater = false;
+    private bool isTouchingWater = false;
+    private bool intentionallyJumped = false;
 
     Vector3 facedir;
     void Start()
@@ -59,6 +63,7 @@ public class chibimovement : MonoBehaviour
             {
                 GetComponent<Rigidbody>().AddForce(Vector3.up * jumpforce, ForceMode.Impulse);
                 isGrounded = false;
+                intentionallyJumped = true;
             }
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
@@ -98,7 +103,7 @@ public class chibimovement : MonoBehaviour
                     chibi.GetComponent<Animator>().SetBool("Run", true);
                     chibi.GetComponent<Animator>().SetBool("Stop", false);
                 }
-                else
+                else if (intentionallyJumped)
                 {
                     chibi.GetComponent<Animator>().SetBool("Run", false);
                     chibi.GetComponent<Animator>().SetBool("Stop", false);
@@ -113,7 +118,7 @@ public class chibimovement : MonoBehaviour
                     chibi.GetComponent<Animator>().SetBool("Run", false);
                     chibi.GetComponent<Animator>().SetBool("Stop", true);
                 }
-                else
+                else if (intentionallyJumped)
                 {
                     chibi.GetComponent<Animator>().SetBool("Run", false);
                     chibi.GetComponent<Animator>().SetBool("Stop", false);
@@ -128,7 +133,8 @@ public class chibimovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
-            if (inAboveWater)
+            intentionallyJumped = false;
+            if (inAboveWater && !isTouchingWater)
             {
                 inAboveWater = false;
                 chibi.GetComponent<Animator>().SetBool("ReturnToIdle", true);
@@ -150,7 +156,9 @@ public class chibimovement : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Water"))
         {
+            isTouchingWater = true;
             inAboveWater = true;
+            isGrounded = false;
             if (isMoving)
             {
                 chibi.GetComponent<Animator>().SetBool("IdleSwim", false);
@@ -170,6 +178,29 @@ public class chibimovement : MonoBehaviour
         }
     }
 
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Water"))
+        {
+            isTouchingWater = false;
+            if (isGrounded)
+            {
+                inAboveWater = false;
+                chibi.GetComponent<Animator>().SetBool("ReturnToIdle", true);
+                chibi.GetComponent<Animator>().SetBool("IdleSwim", false);
+                chibi.GetComponent<Animator>().SetBool("Swim", false);
+            }
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
+        
+    }
 
     IEnumerator WaitAttackEnd()
     {

@@ -21,9 +21,9 @@ public class SceneInfo : MonoBehaviour
                 spawnZone.currentMobs++;
                 spawnZone.mobs.Add(obj);
                 GameObject actualMob = obj.transform.GetChild(0).gameObject;
-                actualMob.GetComponent<ArcherfishMovement>().sceneInfo = gameObject;
-                actualMob.GetComponent<ArcherfishMovement>().spawnZone = spawnZone;
-                actualMob.GetComponent<ArcherfishMovement>().swimSpeed = 25f;
+                actualMob.GetComponent<MobMovement>().sceneInfo = gameObject;
+                actualMob.GetComponent<MobMovement>().spawnZone = spawnZone;
+                actualMob.GetComponent<MobMovement>().movementSpeed = 25f;
                 spawnZone.actualMobs.Add(actualMob);
             }
         }

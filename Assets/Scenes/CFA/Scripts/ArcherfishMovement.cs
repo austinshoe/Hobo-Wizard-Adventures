@@ -3,13 +3,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ArcherfishMovement : MonoBehaviour
+public class ArcherfishMovement : MobMovement
 {
-    public bool isMoving = false;
-    public float swimSpeed = 25;
-    public GameObject sceneInfo;
-    public SpawnZone spawnZone;
-    public Animator anim;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -113,8 +108,8 @@ public class ArcherfishMovement : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), Time.deltaTime * 5f);
             //transform.rotation = Quaternion.LookRotation(moveDir); // Snap
 
-            transform.position += moveDir * swimSpeed * Time.deltaTime;
-            elapsedDist += swimSpeed * Time.deltaTime;
+            transform.position += moveDir * movementSpeed * Time.deltaTime;
+            elapsedDist += movementSpeed * Time.deltaTime;
 
             yield return null;
         }
@@ -124,6 +119,16 @@ public class ArcherfishMovement : MonoBehaviour
         anim.SetBool("IdleSwim", true);
         yield return new WaitForSeconds(1f);
         isMoving = false;
+    }
+
+    public override void Die()
+    {
+
+    }
+    
+    public override void Hurt()
+    {
+        
     }
 
     /*IEnumerator SwimTo(Vector3 endPos)
